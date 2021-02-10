@@ -19,7 +19,8 @@ def run_batch(iterations=50, max_steps=100, use_mp: bool = True):
                        iterations=iterations,  # Iterations per combination of parameters
                        max_steps=max_steps,
                        model_reporters={"Hitpoints": HumanModel.get_hitpoints,
-                                        "Ill vertices": HumanModel.get_ill_vertices, "End time": HumanModel.get_end})
+                                        "Ill vertices": HumanModel.get_ill_vertices,
+                                        "End time": HumanModel.get_end})
 
     batch_run.run_all()  # Run all simulations
     # Get DataFrame with collected data
