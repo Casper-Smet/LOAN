@@ -2,9 +2,10 @@ import networkx as nx
 from mesa import Model
 from mesa.datacollection import DataCollector
 from mesa.time import StagedActivation
+from pathlib import Path
 
 from agent import NaniteAgent
-
+from helpers import graph_from_json
 
 class HumanModel(Model):
     """ Environment representing the human body's circulatory system.
@@ -16,8 +17,10 @@ class HumanModel(Model):
     ILLNESS_CHANCE = 0.2
     INTERSECT_ASTRAY_CHANCE = 0.1
     MAX_ILL_VERTICES = 4
+    NUM_AGENTS = 1
+    GRAPH = graph_from_json(Path("./loan/network.json"))
 
-    def __init__(self, N: int, network: nx.MultiDiGraph, hitpoints: int = INIT_HITPOINTS, illness_chance: float = ILLNESS_CHANCE, max_ill_vertices: int = MAX_ILL_VERTICES):
+    def __init__(self, N: int = NUM_AGENTS, network: nx.MultiDiGraph = GRAPH, hitpoints: int = INIT_HITPOINTS, illness_chance: float = ILLNESS_CHANCE, max_ill_vertices: int = MAX_ILL_VERTICES):
         self.num_agents = N
         self.hitpoints = hitpoints
         self._illness_chance = illness_chance
