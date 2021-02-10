@@ -28,8 +28,11 @@ def graph_from_json(fp: Path, against_weight: int = 4, with_weight: int = 2):
 
 
 def plot_graph(graph):
-    """Plots the given graph."""
-    pos = nx.spring_layout(graph)  # Save positions of all vertices
+    """Plots the given graph.
+    For each tuple in pos-dictionairy, tuple[0] is the x-value, tuple[1] is the y-value.
+    """
+    pos = {14: (1, 0), 12: (1, 1), 13: (0, 1), 11: (2, 1), 10: (1, 2), 9: (2, 2), 8: (0, 3),
+           7: (1, 3), 6: (2, 3), 5: (0, 4), 4: (1, 4), 3: (2, 4), 2: (1, 5), 1: (1, 6)}
     options = {"edgecolors": "tab:grey", "node_size": 800, "alpha": 0.95}
 
     # Draw all nodes
