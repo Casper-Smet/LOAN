@@ -10,14 +10,20 @@ from model import HumanModel
 def main():
     graph = graph_from_json(Path("./loan/network.json"))
     env = HumanModel(1, graph)
-    print(env)
-    env.step()
-    print(env)
-    # a = NaniteAgent(0, env)
-    # print(a)
-    # best_paths = a.perceive()
-    # for p in best_paths:
-    #     print(p)
+    # print(env)
+    # env.step()
+    # print(env)
+    # env.step()
+    # print(env)
+    a = NaniteAgent(0, env)
+    # a.pos = env.ill_vertices[0]
+    # a._heal()
+    # print(env)
+    print(a)
+    a.perceive()
+    a.act()
+    a.update()
+
     # plot_graph(graph)
 
 
