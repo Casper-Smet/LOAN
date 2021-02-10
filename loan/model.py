@@ -14,6 +14,7 @@ class HumanModel(Model):
     # CONSTANTINOPLE (the birthplace of the constant)
     INIT_HITPOINTS = 60
     ILLNESS_CHANCE = 0.2
+    INTERSECT_ASTRAY_CHANCE = 0.1
     MAX_ILL_VERTICES = 4
 
     def __init__(self, N: int, network: nx.MultiDiGraph, hitpoints: int = INIT_HITPOINTS, illness_chance: float = ILLNESS_CHANCE, max_ill_vertices: int = MAX_ILL_VERTICES):
@@ -22,7 +23,7 @@ class HumanModel(Model):
         self._illness_chance = illness_chance
         self._max_ill_vertices = min(max_ill_vertices, len(network.nodes))
         self.network: nx.MultiDiGraph = network
-        self.ill_vertices = []
+        self.ill_vertices = [2]
         model_stages = ["perceive", "act", "update"]
         self.schedule = StagedActivation(self, stage_list=model_stages)
 
