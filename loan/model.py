@@ -50,6 +50,9 @@ class HumanModel(Model):
     def step(self):
         # All vertices that are still ill since last round hurt the human
         self.hurt()
+        if self.hitpoints < 1:
+            self.running = False
+            return
 
         # if maximum amount of ill vertices is not met, random vertex _may_ get sick
         if len(self.ill_vertices) < self._max_ill_vertices and self.random.random() < self._illness_chance:
@@ -79,3 +82,7 @@ def get_hitpoints(model: HumanModel):
 
 def get_ill_vertices(model: HumanModel):
     return model.ill_vertices
+
+
+def get_end(model: HumanModel):
+    return model.schedule.steps
