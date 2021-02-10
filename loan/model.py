@@ -1,5 +1,6 @@
 import networkx as nx
 from mesa import Model
+from mesa.datacollection import DataCollector
 from mesa.time import StagedActivation
 
 from agent import NaniteAgent
@@ -31,6 +32,10 @@ class HumanModel(Model):
             # add to schedule
             self.schedule.add(agent)
 
+        self.datacollector = DataCollector(
+            model_reporters={"Hitpoints": "hitpoints", "Ill vertices": "ill_vertices"})
+        self.running = True
+
     def hurt(self):
         """Remove len(ill_verticies) from the model's hitpoints."""
         self.hitpoints -= len(self.ill_vertices)
@@ -50,14 +55,26 @@ class HumanModel(Model):
             self._set_random_vertex_to_ill()
 
         # Agents' StagedActivation
-        # self.schedule.step()
+        self.schedule.step()
+
+        # Collect data
+        # self.datacollector.collect(self)
 
     def restore_vertex(self, healed_vertex: int):
         """Gets a sign from an agent that an ill vertex has been healed."""
         if healed_vertex in self.ill_vertices:
             self.ill_vertices.remove(healed_vertex)
         else:
-            raise ValueError(f"healed_vertex is not in ill_vertices, {healed_vertex} not in {self.ill_vertices}")
+            raise ValueError(
+                f"healed_vertex is not in ill_vertices, {healed_vertex} not in {self.ill_vertices}")
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}: hitpoints {self.hitpoints}; agents {self.num_agents}; ill vertices {self.ill_vertices}"
+
+
+def get_hitpoints(model: HumanModel):
+    return model.hitpoints
+
+
+def get_ill_vertices(model: HumanModel):
+    return model.ill_vertices
