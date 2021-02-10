@@ -72,17 +72,29 @@ class HumanModel(Model):
             raise ValueError(
                 f"healed_vertex is not in ill_vertices, {healed_vertex} not in {self.ill_vertices}")
 
+    def get_hitpoints(self):
+        """Gets hitpoints for batchrunner
+
+        :return: HumanModel's hitpoints
+        :rtype: int
+        """
+        return self.hitpoints
+
+    def get_ill_vertices(self):
+        """Gets ill_vertices for batchrunner
+
+        :return: HumanModel's ill_vertices
+        :rtype: [int]
+        """
+        return self.ill_vertices
+
+    def get_end(self):
+        """Gets step count for batchrunner
+
+        :return: HumanModel's step count
+        :rtype: int
+        """
+        return self.schedule.steps
+
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}: hitpoints {self.hitpoints}; agents {self.num_agents}; ill vertices {self.ill_vertices}"
-
-
-def get_hitpoints(model: HumanModel):
-    return model.hitpoints
-
-
-def get_ill_vertices(model: HumanModel):
-    return model.ill_vertices
-
-
-def get_end(model: HumanModel):
-    return model.schedule.steps
