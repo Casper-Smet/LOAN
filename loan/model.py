@@ -23,7 +23,7 @@ class HumanModel(Model):
         self._illness_chance = illness_chance
         self._max_ill_vertices = min(max_ill_vertices, len(network.nodes))
         self.network: nx.MultiDiGraph = network
-        self.ill_vertices = [2]
+        self.ill_vertices = []
         model_stages = ["perceive", "act", "update"]
         self.schedule = StagedActivation(self, stage_list=model_stages)
 
