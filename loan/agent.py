@@ -124,11 +124,11 @@ class NaniteAgent(Agent):
                     (self.random.choices([True, False], weights=astray_probs)):
                 # The agent is currently on a intersection (a node with more than 2 edges)
                 # Furthermore, the agent is beyond the first step of the simulation,
-                # The agent could take a wrong turn on the intersection
+                # At this point the agent will take a wrong turn on the intersection, because of ill fate
                 adj_edges = self._get_neighbors_and_weights()
-                # Remove the previously visited vertex
+                # Remove the previously visited vertex, and remove the targeted node
                 prev_pos = self.percept_sequence[-2]
-                adj_edges = list(filter(lambda x: x[0] != prev_pos, adj_edges))
+                adj_edges = list(filter(lambda x: x[0] != prev_pos or x[0] != new_target, adj_edges))
                 # Select the new vertex to get lost in, and adjust the target and energy accordingly
                 new_target, energy = self.random.choice(adj_edges)
 
