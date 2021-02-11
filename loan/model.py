@@ -5,6 +5,8 @@ from mesa import Model
 from mesa.datacollection import DataCollector
 from mesa.time import StagedActivation
 
+from mesa.space import NetworkGrid
+
 from agent import NaniteAgent
 from helpers import graph_from_json
 
@@ -28,15 +30,19 @@ class HumanModel(Model):
         self._illness_chance = illness_chance
         self._max_ill_vertices = min(max_ill_vertices, len(network.nodes))
         self.network: nx.MultiDiGraph = network
+        # self.grid = NetworkGrid(self.network)
         self.ill_vertices = []
         model_stages = ["perceive", "act", "update"]
         self.schedule = StagedActivation(self, stage_list=model_stages)
+        self.agents = []
 
         # create agents
         for i in range(self.num_agents):
             agent = NaniteAgent(i, self)
             # add to schedule
             self.schedule.add(agent)
+            # add to agent list
+            self.agents.append(agent)
 
         self.datacollector = DataCollector(
             model_reporters={"Hitpoints": "hitpoints", "Ill vertices": "ill_vertices"})
