@@ -20,4 +20,4 @@ class NetworkModule(VisualizationElement):
         self.js_code = f"elements.push({new_element});"
 
     def render(self, model):
-        return self.portrayal_method(model.network)
+        return self.portrayal_method(model)

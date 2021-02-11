@@ -18,22 +18,22 @@ class Server(ModularServer):
         IOLoop.current().start()
 
 
-def network_portrayal(network):
+def network_portrayal(model):
     # print(network.nodes.data("agent"))
     # print(network.edges)
 
     portrayal = {}
     portrayal["nodes"] = [{"id": node_id,
                            "size": 10,
-                           "color": "#007959" if agents != None else "#CC0000",
-                           "label": str(node_id)}
-                          for (node_id, agents) in network.nodes.data("agent")]
+                           "color": "#007959" if node_id in model.ill_vertices else "#CC0000",
+                           "label": f"{node_id}"}
+                          for (node_id, agents) in model.network.nodes.data("agent")]
 
     portrayal["edges"] = [{"id": edge_id,
                            "source": source,
                            "target": target,
                            "color": "#000000"}
-                          for edge_id, (source, target, _) in enumerate(network.edges)]
+                          for edge_id, (source, target, _) in enumerate(model.network.edges)]
 
     return portrayal
 
