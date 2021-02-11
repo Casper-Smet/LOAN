@@ -143,8 +143,11 @@ class NaniteAgent(Agent):
 
         # Lower the energy of the agent
         self.energy -= self.next_state.energy_cost
+        # TODO: Add option to gain energy by recharging via dynamo
 
-        # TODO: When agent's energy is < 1, kill it 💀
+        # TODO: Consider moving this code to the environment
+        if self.energy <= 0:  # If no energy left, agent is dead.
+            self.model.schedule.remove(self)
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__} {self.model}/{self.unique_id}: Energy {self.energy}: Position {self.pos}"

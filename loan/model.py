@@ -1,11 +1,13 @@
+from pathlib import Path
+
 import networkx as nx
 from mesa import Model
 from mesa.datacollection import DataCollector
 from mesa.time import StagedActivation
-from pathlib import Path
 
 from agent import NaniteAgent
 from helpers import graph_from_json
+
 
 class HumanModel(Model):
     """ Environment representing the human body's circulatory system.
