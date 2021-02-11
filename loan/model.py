@@ -17,7 +17,7 @@ class HumanModel(Model):
     # CONSTANTINOPLE (the birthplace of the constant)
     INIT_HITPOINTS = 60
     ILLNESS_CHANCE = 0.2
-    INTERSECT_ASTRAY_CHANCE = 0.1
+    INTERSECT_ASTRAY_CHANCE = 0.2
     MAX_ILL_VERTICES = 4
     NUM_AGENTS = 1
     GRAPH = graph_from_json(Path("./loan/network.json"))
