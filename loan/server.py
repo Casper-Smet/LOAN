@@ -44,11 +44,10 @@ def network_portrayal(network):
     return portrayal
 
 
-network = NetworkModule(network_portrayal, 500, 500, library="sigma")
-tiles = [network]
-model_params = {
-}
-
-server = Server(HumanModel, tiles, "Human Model", model_params)
-server.port = 8521
-server.launch()
+if __name__ == "__main__":
+    network = NetworkModule(network_portrayal, 500, 500, library="sigma")
+    tiles = [network]
+    model_params = {
+    }
+    server = Server(HumanModel, tiles, "Human Model", model_params)
+    server.launch(port=8521)
