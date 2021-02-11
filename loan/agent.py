@@ -144,6 +144,8 @@ class NaniteAgent(Agent):
         # Lower the energy of the agent
         self.energy -= self.next_state.energy_cost
 
+        # TODO: When agent's energy is < 1, kill it 💀
+
     def __repr__(self) -> str:
         return f"{self.__class__.__name__} {self.model}/{self.unique_id}: Energy {self.energy}: Position {self.pos}"
 
