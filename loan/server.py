@@ -4,6 +4,7 @@ from tornado.ioloop import IOLoop
 
 from model import HumanModel
 from visualization import NetworkModule
+from helpers import give_node_positions, node_positions_on_canvas
 
 
 class Server(ModularServer):
@@ -23,10 +24,12 @@ def network_portrayal(model):
     # print(network.edges)
 
     agent_pos = model.agents[0].pos
+    new_positions = node_positions_on_canvas(give_node_positions())
     portrayal = {}
     portrayal["nodes"] = [{"id": node_id,
-                           "x": 10,
-                           "size": 10,
+                           "x": new_positions.get(node_id).get("x"),
+                           "y": new_positions.get(node_id).get("y"),
+                           "size": 20,
                            "color": "#007959" if node_id in model.ill_vertices else "#CC0000",
                            "label": f"{node_id} - 🕵️" if node_id == agent_pos else f"{node_id}"
                            }
@@ -38,13 +41,14 @@ def network_portrayal(model):
                            "target": target,
                            "color": "#000000"}
                           for edge_id, (source, target, _) in enumerate(model.network.edges)]
+    
+    portrayal["energy"] = model.agents[0].energy
 
     return portrayal
 
 if __name__ == "__main__":
-    js_engine = "sigma"
-    network = NetworkModule(network_portrayal, 600, 600, library=js_engine)
+    network = NetworkModule(network_portrayal, 600, 600)
     tiles = [network]
     model_params = {}
     server = Server(HumanModel, tiles, "Human Model", model_params)
-    server.launch(port=8583)
+    server.launch(port=8581)
