@@ -2,9 +2,9 @@ from mesa.visualization.ModularVisualization import ModularServer
 from tornado import autoreload
 from tornado.ioloop import IOLoop
 
+from helpers import give_node_positions, node_positions_on_canvas
 from model import HumanModel
 from visualization import NetworkModule
-from helpers import give_node_positions, node_positions_on_canvas
 
 
 class Server(ModularServer):
@@ -31,20 +31,20 @@ def network_portrayal(model):
                            "y": new_positions.get(node_id).get("y"),
                            "size": 20,
                            "color": "#007959" if node_id in model.ill_vertices else "#CC0000",
-                           "label": f"{node_id} - 🕵️" if node_id == agent_pos else f"{node_id}"
-                           }
-                          for (node_id, agents) in model.network.nodes.data("agent")]
+                           "label": f"{node_id} - 🕵️" if node_id == agent_pos else f"{node_id}"}
+                          for (node_id, _) in model.network.nodes.data("agent")]
 
     portrayal["edges"] = [{"id": edge_id,
-                           "type": 'curve',
+                           "type": "curve",
                            "source": source,
                            "target": target,
                            "color": "#000000"}
                           for edge_id, (source, target, _) in enumerate(model.network.edges)]
-    
+
     portrayal["energy"] = model.agents[0].energy
 
     return portrayal
+
 
 if __name__ == "__main__":
     network = NetworkModule(network_portrayal, 600, 600)

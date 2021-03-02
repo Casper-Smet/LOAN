@@ -1,7 +1,6 @@
-const GraphModule = function(canvas_width, canvas_height) {
+const GraphModule = function (canvas_width, canvas_height) {
 
-    let div_tag = "<div id='graph-container' style='width: " +
-        canvas_width + "px; height: " + canvas_height + "px;'></div>";
+    let div_tag = `<div id='graph-container' style='width: ${canvas_width}px; height: ${canvas_height}px;'></div>`;
 
     // Append it to #elements:
     let div = $(div_tag)[0];
@@ -16,7 +15,7 @@ const GraphModule = function(canvas_width, canvas_height) {
         }
     };
 
-    this.render = function(data) {
+    this.render = function (data) {
         let graph = JSON.parse(JSON.stringify(data));
 
         // Update the instance's graph:
@@ -41,7 +40,7 @@ const GraphModule = function(canvas_width, canvas_height) {
         s.refresh();
     };
 
-    this.reset = function() {
+    this.reset = function () {
         if (s instanceof sigma) {
             s.graph.clear();
             s.refresh();

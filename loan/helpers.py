@@ -47,7 +47,7 @@ def node_positions_on_canvas(all_pos: dict, w_canvas: int = 600, h_canvas: int =
     # Calculate the multiplication value on both axis with an offset
     x_mult = w_canvas // (x_max + 1)
     y_mult = h_canvas // (y_max + 1)
-    
+
     # Apply the new position
     new_pos = {}
     for pos in all_pos.items():

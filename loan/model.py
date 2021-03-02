@@ -5,8 +5,6 @@ from mesa import Model
 from mesa.datacollection import DataCollector
 from mesa.time import StagedActivation
 
-from mesa.space import NetworkGrid
-
 from agent import NaniteAgent
 from helpers import graph_from_json
 
@@ -24,13 +22,13 @@ class HumanModel(Model):
     NUM_AGENTS = 1
     GRAPH = graph_from_json(Path("./loan/network.json"))
 
-    def __init__(self, N: int = NUM_AGENTS, network: nx.MultiDiGraph = GRAPH, hitpoints: int = INIT_HITPOINTS, illness_chance: float = ILLNESS_CHANCE, max_ill_vertices: int = MAX_ILL_VERTICES):
+    def __init__(self, N: int = NUM_AGENTS, network: nx.MultiDiGraph = GRAPH, hitpoints: int = INIT_HITPOINTS,
+                 illness_chance: float = ILLNESS_CHANCE, max_ill_vertices: int = MAX_ILL_VERTICES):
         self.num_agents = N
         self.hitpoints = hitpoints
         self._illness_chance = illness_chance
         self._max_ill_vertices = min(max_ill_vertices, len(network.nodes))
         self.network: nx.MultiDiGraph = network
-        # self.grid = NetworkGrid(self.network)
         self.ill_vertices = []
         model_stages = ["perceive", "act", "update"]
         self.schedule = StagedActivation(self, stage_list=model_stages)
