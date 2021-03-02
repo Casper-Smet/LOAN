@@ -5,8 +5,8 @@ from mesa import Model
 from mesa.datacollection import DataCollector
 from mesa.time import StagedActivation
 
-from agent import NaniteAgent
-from helpers import graph_from_json
+from loan.agent import NaniteAgent
+from loan.helpers import graph_from_json
 
 
 class HumanModel(Model):

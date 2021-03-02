@@ -2,9 +2,9 @@ from mesa.visualization.ModularVisualization import ModularServer
 from tornado import autoreload
 from tornado.ioloop import IOLoop
 
-from helpers import give_node_positions, node_positions_on_canvas
-from model import HumanModel
-from visualization import NetworkModule
+from loan.helpers import give_node_positions, node_positions_on_canvas
+from loan.model import HumanModel
+from loan.visualization import NetworkModule
 
 
 class Server(ModularServer):
@@ -45,10 +45,8 @@ def network_portrayal(model):
 
     return portrayal
 
+network = NetworkModule(network_portrayal, 600, 600)
 
-if __name__ == "__main__":
-    network = NetworkModule(network_portrayal, 600, 600)
-    tiles = [network]
-    model_params = {}
-    server = Server(HumanModel, tiles, "Human Model", model_params)
-    server.launch(port=8581)
+tiles = [network]
+
+model_params = {}
