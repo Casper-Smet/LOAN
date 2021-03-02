@@ -4,9 +4,8 @@ from typing import List, Tuple
 import networkx as nx
 from mesa import Agent, Model
 
-
-class NaniteAgent(Agent):
-    """NaniteAgent contains the Nanite-agent logic.
+class HelperAgent(Agent):
+    """HelperAgent contains the Nanite-agent logic for the HelperNanite.
     Execution follows:
      - Perceive
      - Act
@@ -16,13 +15,16 @@ class NaniteAgent(Agent):
     HEAL_COST = 0  # Amount of energy needed to heal a vertex
     NextState = namedtuple("NextState", ["heal", "target", "energy_cost"], defaults=[False, None, 0])
 
-    def __init__(self, unique_id: int, model: Model, energy: int = INIT_ENERGY):
+    def __init__(self, unique_id: int, model: Model, pos: int, energy: int = INIT_ENERGY):
         super().__init__(unique_id, model)
         self.energy = energy
-        self.pos = self.random.choice(list(self.model.network.nodes))
-        self.next_state = NaniteAgent.NextState()  # Holds the information about the next move to make
+        self.pos = pos
+        # self.model.grid.place_agent(self, self.pos)
+        self.next_state = HelperAgent.NextState()  # Holds the information about the next move to make
         self.perception = {}
         self.percept_sequence = []  # Holds information about the visited Vertices
+        self.factory_location = self.model.factory_location
+        self.alert_for_disease_on_node = False # (location, disease)
 
     def _heal(self) -> None:
         """Heals vertex at current position, calls self.model.healed(healed_vertex: int)."""
@@ -77,10 +79,17 @@ class NaniteAgent(Agent):
         self.percept_sequence.append(self.pos)
         # Perceive all the ill vertices from the environment
         self.perception["ill_vertices"] = self.model.ill_vertices
-        # Perceive if the current vertex is ill
-        self.perception["cur_pos_is_ill"] = self.pos in self.perception["ill_vertices"]
         # Perceive all possible shortest paths to all ill vertices
         self.perception["shortest_paths_per_ill_vertex"] = [self._perceive_paths(vert) for vert in self.perception["ill_vertices"]]
+        # Perceive if the current vertex is ill
+        self.perception["cur_pos_is_ill"] = self.model.cell_properties[self.pos]["is_ill"]  # Boolean
+        # Perceive the heat/inflammation value of the current vertex
+        self.perception["cur_pos_heat_value"] = self.model.cell_properties[self.pos]["heat_value"]  # 0.0 <= x <= 1.0
+        # Perceive the current type of illness if the vertex is ill
+        self.perception["cur_pos_illness_type"] = self.model.cell_properties[self.pos]["illness_type"]  # String
+        # Perceive the heat value of the neighbouring vertices
+        self.perception["cur_pos_neighbour_heat_values"] = {neigh: self.model.cell_properties[neigh]["heat_value"] 
+                                                            for neigh in self.model.get_neighbours(self.pos)} # String
 
     def act(self) -> None:
         """Action-selection based on perception.
@@ -90,58 +99,29 @@ class NaniteAgent(Agent):
           - Decide to which vertex to move, and how
           - TODO: Broadcast ill vertices to other agents within range
         """
+        # Check whether the current vertex is ill
         if self.perception["cur_pos_is_ill"]:
-            # Check whether the current vertex is ill
-            self.next_state = NaniteAgent.NextState(target=None, heal=True, energy_cost=NaniteAgent.HEAL_COST)
+            # Get shortest path to factory
+            path, step_cost, energy_costs = self._best_path(self._perceive_paths(self.factory_location))
+            self.next_state = HelperAgent.NextState(target=path[0], heal=False, energy_cost=energy_costs[0])
 
-        elif not len(self.perception["ill_vertices"]):
-            # No ill vertices, so go with the flow!
-
-            # Get the adjacent edges of the current vertex!
-            adj_edges = self._get_neighbors_and_weights()
-            # Select the target vertex based on laziness (use the least energy)!
-            # TODO: Adding probability
-            new_target = min(adj_edges, key=lambda x: x[1])
-            # Set the next state.
-            self.next_state = NaniteAgent.NextState(target=new_target[0], heal=False, energy_cost=new_target[1])
-
+        # Current vertex is not ill, so go with the flow!
         else:
-            # There are ill vertices, so find your destination vertex!
-            best_paths = []
-            for target_paths in self.perception["shortest_paths_per_ill_vertex"]:
-                best_paths.append(self._best_path(target_paths))
+            # Get the adjacent edges of the current vertex
+            neighbours = self.model.get_neighbours(self.pos)
+            # Select the target vertex based on inflammation value, go to neigbour with highest temperature
+            # TODO: Add probability
+            new_target = max(neighbours, key=lambda n: neighbours.get[n]["heat_value"])
+            # Set the next state.
+            self.next_state = HelperAgent.NextState(target=new_target, heal=False, energy_cost=self._path_cost([self.pos, new_target])[0])
 
-            # Select the best path which will best_paths per target
-            chosen_path = min(best_paths, key=lambda x: x[1] + sum(x[2]))  # Select path which will take the least amount of steps
-            new_target = chosen_path[0][1]  # Next vertex on the path
-            energy = chosen_path[2][0]   # Energy consumption to move to the next vertex on the path
-
-            # TODO: Add probability behaviour!
-
-            # There is a chance that the agent turns the wrong way on a intersection
-            astray_probs = [self.model.INTERSECT_ASTRAY_CHANCE, 1 - self.model.INTERSECT_ASTRAY_CHANCE]
-            if (len(self.model.network[self.pos]) > 2) and (len(self.percept_sequence) > 1) and \
-                    (self.random.choices([True, False], weights=astray_probs)):
-                # The agent is currently on a intersection (a node with more than 2 edges)
-                # Furthermore, the agent is beyond the first step of the simulation,
-                # At this point the agent will take a wrong turn on the intersection, because of ill fate
-                adj_edges = self._get_neighbors_and_weights()
-                # Remove the previously visited vertex, and remove the targeted node
-                prev_pos = self.percept_sequence[-2]
-                adj_edges = list(filter(lambda x: x[0] != prev_pos or x[0] != new_target, adj_edges))
-                # Select the new vertex to get lost in, and adjust the target and energy accordingly
-                new_target, energy = self.random.choice(adj_edges)
-
-            self.next_state = NaniteAgent.NextState(target=chosen_path[0][1], heal=False, energy_cost=energy)
 
     def update(self) -> None:
         """Updates the current state of the agent."""
-        if self.next_state.heal:
-            self._heal()
-        else:
-            self._move()
+        # Always move the HelperAgent
+        self._move()
 
-        # Lower the energy of the agent
+        # Lower the energy of the agent because it moves
         self.energy -= self.next_state.energy_cost
         # TODO: Add option to gain energy by recharging via dynamo
 
