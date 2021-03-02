@@ -7,7 +7,7 @@ from loan.model import HumanModel
 
 
 def run_batch(iterations=50, max_steps=100, use_mp: bool = True):
-    graph = graph_from_json(Path("./loan/network.json"))
+    graph = graph_from_json(Path("./loan/data/network.json"))
     fixed_params = {"N": 1, "network": graph}
     variable_params = {"illness_chance": [0.1, 0.2, 0.3, 0.4]}
 

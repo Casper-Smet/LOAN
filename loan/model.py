@@ -20,7 +20,7 @@ class HumanModel(Model):
     INTERSECT_ASTRAY_CHANCE = 0.2
     MAX_ILL_VERTICES = 4
     NUM_AGENTS = 1
-    GRAPH = graph_from_json(Path("./loan/network.json"))
+    GRAPH = graph_from_json(Path("./loan/data/network.json"))
 
     def __init__(self, N: int = NUM_AGENTS, network: nx.MultiDiGraph = GRAPH, hitpoints: int = INIT_HITPOINTS,
                  illness_chance: float = ILLNESS_CHANCE, max_ill_vertices: int = MAX_ILL_VERTICES):
