@@ -13,9 +13,7 @@ class HelperAgent(Agent):
      - Update
     """
     INIT_ENERGY = 20
-    HEAL_COST = 0  # Amount of energy needed to heal a vertex
-    NextState = namedtuple(
-        "NextState", ["heal", "target", "energy_cost"], defaults=[False, None, 0])
+    NextState = namedtuple("NextState", ["target", "energy_cost"], defaults=[None, 0])
 
     def __init__(self, unique_id: int, model: Model, pos: int, energy: int = INIT_ENERGY):
         super().__init__(unique_id, model)
@@ -28,10 +26,6 @@ class HelperAgent(Agent):
         self.percept_sequence = []  # Holds information about the visited Vertices
         self.factory_location = self.model.factory_location
         self.alert_for_disease_on_node = False  # (location, disease)
-
-    def _heal(self) -> None:
-        """Heals vertex at current position, calls self.model.healed(healed_vertex: int)."""
-        self.model.restore_vertex(self.pos)
 
     def _move(self) -> None:
         """Moves the agent to the given vertex."""
@@ -102,7 +96,6 @@ class HelperAgent(Agent):
     def act(self) -> None:
         """Action-selection based on perception.
         Possible actions:
-          - Heal the vertex at the current position
           - Go with the flow, when no ill vertices
           - Decide to which vertex to move, and how
           - TODO: Broadcast ill vertices to other agents within range
@@ -113,7 +106,7 @@ class HelperAgent(Agent):
             path, step_cost, energy_costs = self._best_path(
                 self._perceive_paths(self.factory_location))
             self.next_state = HelperAgent.NextState(
-                target=path[0], heal=False, energy_cost=energy_costs[0])
+                target=path[0], energy_cost=energy_costs[0])
 
         # Current vertex is not ill, so go with the flow!
         else:
@@ -125,7 +118,7 @@ class HelperAgent(Agent):
                 neighbours, key=lambda n: neighbours.get[n]["heat_value"])
             # Set the next state.
             self.next_state = HelperAgent.NextState(
-                target=new_target, heal=False, energy_cost=self._path_cost([self.pos, new_target])[0])
+                target=new_target, energy_cost=self._path_cost([self.pos, new_target])[0])
 
     def update(self) -> None:
         """Updates the current state of the agent."""

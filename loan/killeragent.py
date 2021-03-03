@@ -1,5 +1,6 @@
 from mesa import Agent, Model
 
+
 class KillerAgent(Agent):
 
     def __init__(self, unique_id: int, model: Model, creator, pos: int, target_location: int, target_disease: str) -> None:

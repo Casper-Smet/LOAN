@@ -51,10 +51,8 @@ def node_positions_on_canvas(all_pos: dict, w_canvas: int = 600, h_canvas: int =
     # Apply the new position
     new_pos = {}
     for pos in all_pos.items():
-        new_pos[pos[0]] = {
-            "x": (pos[1][0] + 1) * x_mult,
-            "y": h_canvas - (pos[1][1] + 1) * y_mult
-        }
+        new_pos[pos[0]] = {"x": (pos[1][0] + 1) * x_mult,
+                           "y": h_canvas - (pos[1][1] + 1) * y_mult}
     return new_pos
 
 
