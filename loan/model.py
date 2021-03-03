@@ -89,8 +89,7 @@ class HumanModel(Model):
                 self.cell_properties.get(vertex)["heat_value"] = 0.0
         else:
             self.cell_properties.get(vertex)["is_ill"] = True
-            self.cell_properties.get(
-                vertex)["illness_type"] = self._get_random_sickness()
+            self.cell_properties.get(vertex)["illness_type"] = self._get_random_sickness()
             self.cell_properties.get(vertex)["heat_value"] = 1.0
 
     def _update_neighbor_props(self, vertex: int, is_healed: bool):

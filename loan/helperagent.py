@@ -12,7 +12,7 @@ class HelperAgent(Agent):
      - Act
      - Update
     """
-    INIT_ENERGY = 20
+    INIT_ENERGY = 100
     NextState = namedtuple("NextState", ["target", "energy_cost"], defaults=[None, 0])
 
     def __init__(self, unique_id: int, model: Model, pos: int, energy: int = INIT_ENERGY):
@@ -29,7 +29,8 @@ class HelperAgent(Agent):
 
     def _move(self) -> None:
         """Moves the agent to the given vertex."""
-        self.pos = self.next_state.target
+        # self.pos = self.next_state.target
+        self.model.grid.move_agent(self, self.next_state.target)
 
     def _perceive_paths(self, target: int) -> List[List[int]]:
         """Finds all shortest paths to a given target vertex.
@@ -110,8 +111,15 @@ class HelperAgent(Agent):
                 self.next_state = HelperAgent.NextState(target=self.pos, energy_cost=0)
             else:
                 path, step_cost, energy_costs = self._best_path(self._perceive_paths(self.factory_location))
-                self.next_state = HelperAgent.NextState(target=path[0], energy_cost=energy_costs[0])
+                self.next_state = HelperAgent.NextState(target=path[1], energy_cost=energy_costs[0])
 
+        elif self.alert_for_disease_on_node:
+            if self.factory_location == self.pos:
+                self.next_state = HelperAgent.NextState(target=self.pos, energy_cost=0)
+            else:
+                path, step_cost, energy_costs = self._best_path(self._perceive_paths(self.factory_location))
+                self.next_state = HelperAgent.NextState(target=path[1], energy_cost=energy_costs[0])
+            
         # Current vertex is not ill, so go with the flow!
         else:
             # Get the adjacent edges of the current vertex
@@ -134,7 +142,9 @@ class HelperAgent(Agent):
 
         # TODO: Consider moving this code to the environment
         if self.energy <= 0:  # If no energy left, agent is dead.
+            self.model.grid._remove_agent(self, self.pos)
             self.model.schedule.remove(self)
+            # self.model.running = False
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__} {self.model}/{self.unique_id}: Energy {self.energy}: Position {self.pos}"

@@ -7,7 +7,7 @@ from loan.killeragent import KillerAgent
 
 
 class NetworkModule(VisualizationElement):
-    package_includes = ["sigma.min.js"]
+    package_includes = ["sigma.min.js", "sigma.js"]
     local_includes = ["loan/js/GraphNetwork.js"]
 
     def __init__(self, portrayal_method, canvas_height=700, canvas_width=600):
@@ -23,8 +23,6 @@ class NetworkModule(VisualizationElement):
 
 
 def network_portrayal(model):
-    # print(network.nodes.data("agent"))
-    # print(network.edges)
 
     new_positions = node_positions_on_canvas(give_node_positions())
     portrayal = {}
@@ -40,6 +38,7 @@ def network_portrayal(model):
                            "type": "curvedArrow",
                            "source": source,
                            "target": target,
+                           "label": "thies",
                            "color": "#000000"}
                           for edge_id, (source, target, _) in enumerate(model.network.edges)]
 
@@ -57,7 +56,7 @@ def build_label(node_id, agents):
         if isinstance(agent, AgentFactory):
             label += " 🏭"
         if isinstance(agent, KillerAgent):
-            label + " ☠️"
+            label += " 💉"
     return label
 
 
