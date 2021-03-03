@@ -15,20 +15,23 @@ class KillerAgent(Agent):
         self.target_location = target_location
         self.target_disease = target_disease
         self.arrived_on_location = False
+        self.shortest_path_to_target_node = []
 
     def perceive(self) -> None:
-
         # check if target_location is reached
-        self.arrived_on_location = self.pos == self.target_location
-        self.shortest_path_to_target_node = nx.shortest_path(G=self.model.network, source=self.pos, target=self.target_location)
+        if not len(self.shortest_path_to_target_node):
+            self.arrived_on_location = self.pos == self.target_location
+            self.shortest_path_to_target_node = nx.shortest_path(G=self.model.network, source=self.pos, target=self.target_location)
 
     def act(self) -> None:
-        ...
+        # follow shortest path
+        self.shortest_path_to_target_node
+
 
     def update(self) -> None:
 
         if self.arrived_on_location:
-            self.model.ill_vertices.remove(self.target_location)
+            self.model.restore_vertex(self.target_location)
             self.model.grid.remove_agent(self)
             self.model.schedule.remove(self)
             self.creator.spawned_killernanites -= 1
