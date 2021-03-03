@@ -42,9 +42,10 @@ class HumanModel(Model):
         props = {
             "heat_value": 0.0,    # float -> between 1.0 and 0.0
             "is_ill": False,      # bool -> if the current vertex is ill
-            "illness_type": None  # str -> current illness (if the vertex is ill)
+            # str -> current illness (if the vertex is ill)
+            "illness_type": None
         }
-        self.cell_properties = {x:props for x in self.network.nodes}
+        self.cell_properties = {x: props for x in self.network.nodes}
 
         # create agents
         for i in range(self.num_agents):
@@ -61,7 +62,8 @@ class HumanModel(Model):
         self.grid.place_agent(agentfactory, agentfactory.pos)
         self.schedule.add(agentfactory)
 
-        self.datacollector = DataCollector(model_reporters={"Hitpoints": "hitpoints", "Ill vertices": "ill_vertices"})
+        self.datacollector = DataCollector(
+            model_reporters={"Hitpoints": "hitpoints", "Ill vertices": "ill_vertices"})
         self.running = True
 
     def hurt(self):
@@ -72,7 +74,7 @@ class HumanModel(Model):
         """Chooses a random sickness to return."""
         illness = ["clapitalism", "kovid++", "Caring Too Much", "Cutie Pox"]
         return self.random.choice(illness)
-    
+
     def _update_own_props(self, vertex: int, is_healed: bool):
         """Updates the properties of one cell based on if it is healed and the illness of the neighbors."""
         if is_healed:
@@ -86,9 +88,10 @@ class HumanModel(Model):
                 self.cell_properties.get(vertex)["heat_value"] = 0.0
         else:
             self.cell_properties.get(vertex)["is_ill"] = True
-            self.cell_properties.get(vertex)["illness_type"] = self._get_random_sickness()
+            self.cell_properties.get(
+                vertex)["illness_type"] = self._get_random_sickness()
             self.cell_properties.get(vertex)["heat_value"] = 1.0
-    
+
     def _update_neighbor_props(self, vertex: int, is_healed: bool):
         """Updates the heat_values of the neighbors of an particular vertex based on if the current vertex is healed."""
         neighbors = self.network.neighbors(vertex)
@@ -97,22 +100,22 @@ class HumanModel(Model):
             neigh_prop = self.cell_properties.get(direct_neigh)
 
             if not is_healed:
-                # the middle vertex is sick, so update all the values of the neighbors 
+                # the middle vertex is sick, so update all the values of the neighbors
                 if not neigh_prop.get("is_ill"):
                     # the current neighbor is not sick itself, so set the heat_value to 0.5
                     self.cell_properties.get(direct_neigh)["heat_value"] = 0.5
-            
+
             else:
                 # the middle value has been healed so update all the neighbors correctly
                 # get all secondary neighbors minus the original vertex
-                secondary_neighbors = [self.cell_properties.get(n).get("is_ill") for n in self.network.neighbors(direct_neigh) if n is not vertex]
+                secondary_neighbors = [self.cell_properties.get(n).get(
+                    "is_ill") for n in self.network.neighbors(direct_neigh) if n is not vertex]
                 if any(secondary_neighbors):
                     # the neighbor has an ill neighbor so the heat_value stays 0.5
                     self.cell_properties.get(direct_neigh)["heat_value"] = 0.5
                 else:
                     # the neighbor has no ill neighbors so no residual heat
                     self.cell_properties.get(direct_neigh)["heat_value"] = 0.0
-
 
     def _set_random_vertex_to_ill(self):
         """Sets a random node to ill"""

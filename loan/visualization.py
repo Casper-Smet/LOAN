@@ -47,6 +47,7 @@ def network_portrayal(model):
 
     return portrayal
 
+
 network = NetworkModule(network_portrayal, 600, 600)
 
 tiles = [network]

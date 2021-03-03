@@ -3,6 +3,7 @@ from mesa import Agent, Model
 
 from loan.agentfactory import AgentFactory
 
+
 class KillerAgent(Agent):
 
     def __init__(self, unique_id: int, model: Model, creator: AgentFactory, pos: int, target_location: int, target_disease: str) -> None:
@@ -16,7 +17,6 @@ class KillerAgent(Agent):
 
         # check if target_location is reached
         self.arrived_on_location = self.pos == target_location
-
 
     def act(self) -> None:
         ...
