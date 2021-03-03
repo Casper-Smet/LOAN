@@ -105,8 +105,12 @@ class HelperAgent(Agent):
             # Get shortest path to factory
             if not self.alert_for_disease_on_node:
                 self.alert_for_disease_on_node = (self.pos, self.perception["cur_pos_illness_type"])
-            path, step_cost, energy_costs = self._best_path(self._perceive_paths(self.factory_location))
-            self.next_state = HelperAgent.NextState(target=path[0], energy_cost=energy_costs[0])
+            # FIXME: Temporary fix for when factory_location gets sick
+            if self.factory_location == self.pos:
+                self.next_state = HelperAgent.NextState(target=self.pos, energy_cost=0)
+            else:
+                path, step_cost, energy_costs = self._best_path(self._perceive_paths(self.factory_location))
+                self.next_state = HelperAgent.NextState(target=path[0], energy_cost=energy_costs[0])
 
         # Current vertex is not ill, so go with the flow!
         else:
