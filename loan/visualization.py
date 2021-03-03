@@ -1,6 +1,4 @@
 from mesa.visualization.ModularVisualization import VisualizationElement
-from tornado import autoreload
-from tornado.ioloop import IOLoop
 
 from loan.helpers import give_node_positions, node_positions_on_canvas
 
@@ -48,8 +46,5 @@ def network_portrayal(model):
     return portrayal
 
 
-network = NetworkModule(network_portrayal, 600, 600)
-
-tiles = [network]
-
+tiles = [NetworkModule(network_portrayal, 600, 600)]
 model_params = {}
