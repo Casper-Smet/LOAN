@@ -18,7 +18,7 @@ class AgentFactory(Agent):
 
     def perceive(self) -> None:
         # agents visiting on own position carrying alerts for diseases on certain nodes
-        self.visiting_agents = self.model.network.nodes[self.pos]['agent']
+        self.visiting_agents = self.model.network.nodes[self.pos]["agent"]
         self.alerted_diseases = [a.alert_for_disease_on_node for a in self.visiting_agents if a.alert_for_disease_on_node]
 
         # message from killer nanite about destroyed diseases?
