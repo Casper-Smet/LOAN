@@ -26,11 +26,14 @@ class AgentFactory(Agent):
         for helper_agent in self.helper_agents_with_alerts:
             location, disease = helper_agent.alert_for_disease_on_node
 
+            # Find the unique ID for the next agent
+            next_id = len(self.model.schedule.agents)
+
             # check if disease is known
             if disease in self.library_of_diseases:
 
                 # send killer nanite immediately to location if disease is known
-                self.nanite_to_spawn = KillerAgent(self.model, self, self.pos, location, disease)
+                self.nanite_to_spawn = KillerAgent(next_id, self.model, self, self.pos, location, disease)
 
             else:
                 # new disease
@@ -41,7 +44,7 @@ class AgentFactory(Agent):
                     self.nanite_to_spawn = self.nanite_queue.pop()
 
                 # make killer nanite wait for one or more timesteps by adding to queue
-                self.nanite_queue.append(KillerAgent(self.model, self, self.pos, location, disease))
+                self.nanite_queue.append(KillerAgent(next_id, self.model, self, self.pos, location, disease))
 
     def update(self) -> None:
         # reset alert_for_disease_on_node for helper agents
