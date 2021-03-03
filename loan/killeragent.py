@@ -15,7 +15,6 @@ class KillerAgent(Agent):
         # check if target_location is reached
         self.arrived_on_location = self.pos == self.target_location
 
-
     def act(self) -> None:
         ...
 

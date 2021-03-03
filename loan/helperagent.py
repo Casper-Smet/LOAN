@@ -4,6 +4,7 @@ from typing import List, Tuple
 import networkx as nx
 from mesa import Agent, Model
 
+
 class HelperAgent(Agent):
     """HelperAgent contains the Nanite-agent logic for the HelperNanite.
     Execution follows:
@@ -13,18 +14,20 @@ class HelperAgent(Agent):
     """
     INIT_ENERGY = 20
     HEAL_COST = 0  # Amount of energy needed to heal a vertex
-    NextState = namedtuple("NextState", ["heal", "target", "energy_cost"], defaults=[False, None, 0])
+    NextState = namedtuple(
+        "NextState", ["heal", "target", "energy_cost"], defaults=[False, None, 0])
 
     def __init__(self, unique_id: int, model: Model, pos: int, energy: int = INIT_ENERGY):
         super().__init__(unique_id, model)
         self.energy = energy
         self.pos = pos
         # self.model.grid.place_agent(self, self.pos)
-        self.next_state = HelperAgent.NextState()  # Holds the information about the next move to make
+        # Holds the information about the next move to make
+        self.next_state = HelperAgent.NextState()
         self.perception = {}
         self.percept_sequence = []  # Holds information about the visited Vertices
         self.factory_location = self.model.factory_location
-        self.alert_for_disease_on_node = False # (location, disease)
+        self.alert_for_disease_on_node = False  # (location, disease)
 
     def _heal(self) -> None:
         """Heals vertex at current position, calls self.model.healed(healed_vertex: int)."""
@@ -50,7 +53,8 @@ class HelperAgent(Agent):
         # select the one with the lowest cost
         # return (path, energy_cost, length)
 
-        path = min(paths, key=lambda x: len(x) + sum(self._path_cost(x)))  # Select path with lowest total cost
+        # Select path with lowest total cost
+        path = min(paths, key=lambda x: len(x) + sum(self._path_cost(x)))
         energy_costs = self._path_cost(path)  # Energy cost
         step_cost = len(path)  # Amount of steps
 
@@ -80,16 +84,20 @@ class HelperAgent(Agent):
         # Perceive all the ill vertices from the environment
         self.perception["ill_vertices"] = self.model.ill_vertices
         # Perceive all possible shortest paths to all ill vertices
-        self.perception["shortest_paths_per_ill_vertex"] = [self._perceive_paths(vert) for vert in self.perception["ill_vertices"]]
+        self.perception["shortest_paths_per_ill_vertex"] = [
+            self._perceive_paths(vert) for vert in self.perception["ill_vertices"]]
         # Perceive if the current vertex is ill
-        self.perception["cur_pos_is_ill"] = self.model.cell_properties[self.pos]["is_ill"]  # Boolean
+        # Boolean
+        self.perception["cur_pos_is_ill"] = self.model.cell_properties[self.pos]["is_ill"]
         # Perceive the heat/inflammation value of the current vertex
-        self.perception["cur_pos_heat_value"] = self.model.cell_properties[self.pos]["heat_value"]  # 0.0 <= x <= 1.0
+        # 0.0 <= x <= 1.0
+        self.perception["cur_pos_heat_value"] = self.model.cell_properties[self.pos]["heat_value"]
         # Perceive the current type of illness if the vertex is ill
-        self.perception["cur_pos_illness_type"] = self.model.cell_properties[self.pos]["illness_type"]  # String
+        # String
+        self.perception["cur_pos_illness_type"] = self.model.cell_properties[self.pos]["illness_type"]
         # Perceive the heat value of the neighbouring vertices
-        self.perception["cur_pos_neighbour_heat_values"] = {neigh: self.model.cell_properties[neigh]["heat_value"] 
-                                                            for neigh in self.model.get_neighbours(self.pos)} # String
+        self.perception["cur_pos_neighbour_heat_values"] = {neigh: self.model.cell_properties[neigh]["heat_value"]
+                                                            for neigh in self.model.get_neighbours(self.pos)}  # String
 
     def act(self) -> None:
         """Action-selection based on perception.
@@ -102,8 +110,10 @@ class HelperAgent(Agent):
         # Check whether the current vertex is ill
         if self.perception["cur_pos_is_ill"]:
             # Get shortest path to factory
-            path, step_cost, energy_costs = self._best_path(self._perceive_paths(self.factory_location))
-            self.next_state = HelperAgent.NextState(target=path[0], heal=False, energy_cost=energy_costs[0])
+            path, step_cost, energy_costs = self._best_path(
+                self._perceive_paths(self.factory_location))
+            self.next_state = HelperAgent.NextState(
+                target=path[0], heal=False, energy_cost=energy_costs[0])
 
         # Current vertex is not ill, so go with the flow!
         else:
@@ -111,10 +121,11 @@ class HelperAgent(Agent):
             neighbours = self.model.get_neighbours(self.pos)
             # Select the target vertex based on inflammation value, go to neigbour with highest temperature
             # TODO: Add probability
-            new_target = max(neighbours, key=lambda n: neighbours.get[n]["heat_value"])
+            new_target = max(
+                neighbours, key=lambda n: neighbours.get[n]["heat_value"])
             # Set the next state.
-            self.next_state = HelperAgent.NextState(target=new_target, heal=False, energy_cost=self._path_cost([self.pos, new_target])[0])
-
+            self.next_state = HelperAgent.NextState(
+                target=new_target, heal=False, energy_cost=self._path_cost([self.pos, new_target])[0])
 
     def update(self) -> None:
         """Updates the current state of the agent."""
