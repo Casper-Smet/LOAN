@@ -1,7 +1,12 @@
 from mesa import Agent, Model
-
+from collections import namedtuple
+from typing import List
+import networkx as nx
 
 class KillerAgent(Agent):
+
+    INIT_ENERGY = 20
+    NextState = namedtuple("NextState", ["target", "energy_cost"], defaults=[None, 0])
 
     def __init__(self, unique_id: int, model: Model, creator, pos: int, target_location: int, target_disease: str) -> None:
         super().__init__(unique_id, model)
@@ -15,6 +20,7 @@ class KillerAgent(Agent):
 
         # check if target_location is reached
         self.arrived_on_location = self.pos == self.target_location
+        self.shortest_path_to_target_node = nx.shortest_path(G=self.model.network, source=self.pos, target=self.target_location)
 
     def act(self) -> None:
         ...

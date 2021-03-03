@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import List
 
 import networkx as nx
 from mesa import Model
@@ -35,7 +36,7 @@ class HumanModel(Model):
         self.ill_vertices = []
         model_stages = ["perceive", "act", "update"]
         self.schedule = StagedActivation(self, stage_list=model_stages)
-        self.factory_location = self.random.choice(self.network.nodes)
+        self.factory_location = self.random.choice(list(network.nodes))
         self.agents = []
 
         # store the properties of the vertices into an dictionary
@@ -56,7 +57,7 @@ class HumanModel(Model):
             # add to agent list
             self.agents.append(agent)
 
-        agentfactory = AgentFactory(0, self, self.factory_location)
+        agentfactory = AgentFactory(self.num_agents + 1, self, self.factory_location)
         self.grid.place_agent(agentfactory, agentfactory.pos)
         self.schedule.add(agentfactory)
 
@@ -69,7 +70,7 @@ class HumanModel(Model):
 
     def _get_random_sickness(self) -> str:
         """Chooses a random sickness to return."""
-        illness = ["clapitalism", "kovid++", "Caring Too Much", "Cutie Pox"]
+        illness = ["capitalism", "kovid++", "Caring Too Much", "Cutie Pox"]
         return self.random.choice(illness)
 
     def _update_own_props(self, vertex: int, is_healed: bool):
@@ -78,8 +79,8 @@ class HumanModel(Model):
             self.cell_properties.get(vertex)["is_ill"] = False
             self.cell_properties.get(vertex)["illness_type"] = None
 
-            if any(self.cell_properties.get(n).get("is_ill") for n in self.network.neighbors(vertex)):
-                # A neighbouring cell is ill, so heat_value cannot be changed to 0.0
+            if any(self.cell_properties.get(n).get("is_ill") for n in self.get_neighbors(vertex)):
+                # A neighboring cell is ill, so heat_value cannot be changed to 0.0
                 self.cell_properties.get(vertex)["heat_value"] = 0.5
             else:
                 self.cell_properties.get(vertex)["heat_value"] = 0.0
@@ -91,7 +92,7 @@ class HumanModel(Model):
 
     def _update_neighbor_props(self, vertex: int, is_healed: bool):
         """Updates the heat_values of the neighbors of an particular vertex based on if the current vertex is healed."""
-        neighbors = self.network.neighbors(vertex)
+        neighbors = self.get_neighbors(vertex)
 
         for direct_neigh in neighbors:
             neigh_prop = self.cell_properties.get(direct_neigh)
@@ -106,7 +107,7 @@ class HumanModel(Model):
                 # the middle value has been healed so update all the neighbors correctly
                 # get all secondary neighbors minus the original vertex
                 secondary_neighbors = [self.cell_properties.get(n).get(
-                    "is_ill") for n in self.network.neighbors(direct_neigh) if n is not vertex]
+                    "is_ill") for n in self.get_neighbors(direct_neigh) if n is not vertex]
                 if any(secondary_neighbors):
                     # the neighbor has an ill neighbor so the heat_value stays 0.5
                     self.cell_properties.get(direct_neigh)["heat_value"] = 0.5
@@ -123,7 +124,7 @@ class HumanModel(Model):
         # update the cell properties of the current vertex
         self._update_own_props(vertex, False)
 
-        # update the heat_value of the neighbours of the vertex
+        # update the heat_value of the neighbors of the vertex
         self._update_neighbor_props(vertex, False)
 
     def step(self):
@@ -179,13 +180,13 @@ class HumanModel(Model):
         """
         return self.schedule.steps
 
-    def get_neighbours(self, vertex):
-        """Gets list of neighbour vertices of given vertex.
+    def get_neighbors(self, vertex) -> List:
+        """Gets list of neighbor vertices of given vertex.
 
-        :return: HumanModel's neighbours of vertex
+        :return: HumanModel's neighbors of vertex
         :rtype: [int]
         """
-        return self.network.neighbors(vertex)
+        return list(self.network.neighbors(vertex))
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}: hitpoints {self.hitpoints}; agents {self.num_agents}; ill vertices {self.ill_vertices}"

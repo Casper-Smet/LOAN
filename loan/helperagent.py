@@ -89,9 +89,9 @@ class HelperAgent(Agent):
         # Perceive the current type of illness if the vertex is ill
         # String
         self.perception["cur_pos_illness_type"] = self.model.cell_properties[self.pos]["illness_type"]
-        # Perceive the heat value of the neighbouring vertices
-        self.perception["cur_pos_neighbour_heat_values"] = {neigh: self.model.cell_properties[neigh]["heat_value"]
-                                                            for neigh in self.model.get_neighbours(self.pos)}  # String
+        # Perceive the heat value of the neighboring vertices
+        self.perception["cur_pos_neighbor_heat_values"] = {neigh: self.model.cell_properties[neigh]["heat_value"]
+                                                            for neigh in self.model.get_neighbors(self.pos)}  # String
 
     def act(self) -> None:
         """Action-selection based on perception.
@@ -103,19 +103,18 @@ class HelperAgent(Agent):
         # Check whether the current vertex is ill
         if self.perception["cur_pos_is_ill"]:
             # Get shortest path to factory
-            path, step_cost, energy_costs = self._best_path(
-                self._perceive_paths(self.factory_location))
-            self.next_state = HelperAgent.NextState(
-                target=path[0], energy_cost=energy_costs[0])
+            if not self.alert_for_disease_on_node:
+                self.alert_for_disease_on_node = (self.pos, self.perception["cur_pos_illness_type"])
+            path, step_cost, energy_costs = self._best_path(self._perceive_paths(self.factory_location))
+            self.next_state = HelperAgent.NextState(target=path[0], energy_cost=energy_costs[0])
 
         # Current vertex is not ill, so go with the flow!
         else:
             # Get the adjacent edges of the current vertex
-            neighbours = self.model.get_neighbours(self.pos)
-            # Select the target vertex based on inflammation value, go to neigbour with highest temperature
+            neighbors = self.model.get_neighbors(self.pos)
+            # Select the target vertex based on inflammation value, go to neighbor with highest temperature
             # TODO: Add probability
-            new_target = max(
-                neighbours, key=lambda n: neighbours.get[n]["heat_value"])
+            new_target = max(neighbors, key=lambda n: self.model.cell_properties[n]["heat_value"])
             # Set the next state.
             self.next_state = HelperAgent.NextState(
                 target=new_target, energy_cost=self._path_cost([self.pos, new_target])[0])

@@ -1,7 +1,7 @@
 from mesa import Agent, Model
 
 from loan.killeragent import KillerAgent
-
+from loan.helperagent import HelperAgent
 
 class AgentFactory(Agent):
 
@@ -9,7 +9,7 @@ class AgentFactory(Agent):
         super().__init__(unique_id, model)
         self.pos = pos
         self.visiting_agents = []
-        self.alerted_diseases = []
+        self.helper_agents_with_alerts = []
         self.library_of_diseases = []
         self.nanite_queue = []
         self.spawned_killernanites = 0
@@ -19,13 +19,12 @@ class AgentFactory(Agent):
     def perceive(self) -> None:
         # agents visiting on own position carrying alerts for diseases on certain nodes
         self.visiting_agents = self.model.network.nodes[self.pos]['agent']
-        self.alerted_diseases = [a.alert_for_disease_on_node for a in self.visiting_agents if a.alert_for_disease_on_node]
-
-        # message from killer nanite about destroyed diseases?
+        self.helper_agents_with_alerts = [a for a in self.visiting_agents if isinstance(a, HelperAgent) and a.alert_for_disease_on_node]
 
     def act(self) -> None:
 
-        for location, disease in self.alerted_diseases:
+        for helper_agent in self.helper_agents_with_alerts:
+            location, disease = helper_agent.alert_for_disease_on_node
 
             # check if disease is known
             if disease in self.library_of_diseases:
@@ -45,6 +44,10 @@ class AgentFactory(Agent):
                 self.nanite_queue.append(KillerAgent(self.spawned_killernanites, self.model, self, self.pos, location, disease))
 
     def update(self) -> None:
+        # reset alert_for_disease_on_node for helper agents
+        for helper_agent in self.helper_agents_with_alerts:
+            helper_agent.alert_for_disease_on_node = False
+
         # spawn killer nanite if necessary
         if self.nanite_to_spawn != None:
             self.model.schedule.add(self.nanite_to_spawn)
