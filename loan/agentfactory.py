@@ -1,3 +1,5 @@
+from uuid import uuid1
+
 from mesa import Agent, Model
 
 from loan.killeragent import KillerAgent
@@ -27,7 +29,7 @@ class AgentFactory(Agent):
             location, disease = helper_agent.alert_for_disease_on_node
 
             # Find the unique ID for the next agent
-            next_id = len(self.model.schedule.agents)
+            next_id = uuid1().int  # len(self.model.schedule.agents)
 
             # check if disease is known
             if disease in self.library_of_diseases:
@@ -53,8 +55,8 @@ class AgentFactory(Agent):
 
         # spawn killer nanite
         if self.nanite_to_spawn != None:
-            self.model.schedule.add(self.nanite_to_spawn)
             self.model.grid.place_agent(self.nanite_to_spawn, self.pos)
+            self.model.schedule.add(self.nanite_to_spawn)
             self.spawned_killernanites += 1
             self.nanite_to_spawn = None
 

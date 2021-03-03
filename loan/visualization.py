@@ -1,13 +1,16 @@
 from mesa.visualization.ModularVisualization import VisualizationElement
 
 from loan.helpers import give_node_positions, node_positions_on_canvas
+from loan.helperagent import HelperAgent
+from loan.agentfactory import AgentFactory
+from loan.killeragent import KillerAgent
 
 
 class NetworkModule(VisualizationElement):
     package_includes = ["sigma.min.js"]
     local_includes = ["loan/js/GraphNetwork.js"]
 
-    def __init__(self, portrayal_method, canvas_height=600, canvas_width=600):
+    def __init__(self, portrayal_method, canvas_height=700, canvas_width=600):
 
         self.portrayal_method = portrayal_method
         self.canvas_height = canvas_height
@@ -23,19 +26,18 @@ def network_portrayal(model):
     # print(network.nodes.data("agent"))
     # print(network.edges)
 
-    agent_pos = model.agents[0].pos
     new_positions = node_positions_on_canvas(give_node_positions())
     portrayal = {}
     portrayal["nodes"] = [{"id": node_id,
                            "x": new_positions.get(node_id).get("x"),
                            "y": new_positions.get(node_id).get("y"),
                            "size": 20,
-                           "color": "#007959" if node_id in model.ill_vertices else "#CC0000",
-                           "label": f"{node_id} - 🕵️" if node_id == agent_pos else f"{node_id}"}
-                          for (node_id, _) in model.network.nodes.data("agent")]
+                           "color": set_colour(model.cell_properties.get(node_id).get("heat_value")),
+                           "label": build_label(node_id, agents)}
+                          for (node_id, agents) in model.network.nodes.data("agent")]
 
     portrayal["edges"] = [{"id": edge_id,
-                           "type": "curve",
+                           "type": "curvedArrow",
                            "source": source,
                            "target": target,
                            "color": "#000000"}
@@ -46,5 +48,29 @@ def network_portrayal(model):
     return portrayal
 
 
-tiles = [NetworkModule(network_portrayal, 600, 600)]
+def build_label(node_id, agents):
+    """"""
+    label = f"{node_id}"
+    for agent in agents:
+        if isinstance(agent, HelperAgent):
+            label += " 🕵️"
+        if isinstance(agent, AgentFactory):
+            label += " 🏭"
+        if isinstance(agent, KillerAgent):
+            label + " ☠️"
+    return label
+
+
+def set_colour(heat_value):
+    """"""
+    if heat_value < 0.5:
+        colour = "#007959"
+    elif heat_value < 1.0:
+        colour = "#fc7702"
+    else:
+        colour = "#CC0000"
+    return colour
+
+
+tiles = [NetworkModule(network_portrayal, 700, 800)]
 model_params = {}
