@@ -3,12 +3,12 @@ from pathlib import Path
 import networkx as nx
 from mesa import Model
 from mesa.datacollection import DataCollector
-from mesa.time import StagedActivation
 from mesa.space import NetworkGrid
+from mesa.time import StagedActivation
 
+from loan.agentfactory import AgentFactory
 from loan.helperagent import HelperAgent
 from loan.helpers import graph_from_json
-from loan.agentfactory import AgentFactory
 
 
 class HumanModel(Model):
@@ -39,12 +39,10 @@ class HumanModel(Model):
         self.agents = []
 
         # store the properties of the vertices into an dictionary
-        props = {
-            "heat_value": 0.0,    # float -> between 1.0 and 0.0
-            "is_ill": False,      # bool -> if the current vertex is ill
-            # str -> current illness (if the vertex is ill)
-            "illness_type": None
-        }
+        props = {"heat_value": 0.0,    # float -> between 1.0 and 0.0
+                 "is_ill": False,      # bool -> if the current vertex is ill
+                 # str -> current illness (if the vertex is ill)
+                 "illness_type": None}
         self.cell_properties = {x: props for x in self.network.nodes}
 
         # create agents
@@ -62,8 +60,7 @@ class HumanModel(Model):
         self.grid.place_agent(agentfactory, agentfactory.pos)
         self.schedule.add(agentfactory)
 
-        self.datacollector = DataCollector(
-            model_reporters={"Hitpoints": "hitpoints", "Ill vertices": "ill_vertices"})
+        self.datacollector = DataCollector(model_reporters={"Hitpoints": "hitpoints", "Ill vertices": "ill_vertices"})
         self.running = True
 
     def hurt(self):

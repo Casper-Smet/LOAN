@@ -2,6 +2,7 @@ from mesa import Agent, Model
 
 from loan.killeragent import KillerAgent
 
+
 class AgentFactory(Agent):
 
     def __init__(self, unique_id: int, model: Model, pos: int) -> None:
@@ -23,7 +24,7 @@ class AgentFactory(Agent):
         # message from killer nanite about destroyed diseases?
 
     def act(self) -> None:
-        
+
         for location, disease in self.alerted_diseases:
 
             # check if disease is known
@@ -42,7 +43,6 @@ class AgentFactory(Agent):
 
                 # make killer nanite wait for one or more timesteps by adding to queue
                 self.nanite_queue.append(KillerAgent(self.model, self, self.pos, location, disease))
-
 
     def update(self) -> None:
         # spawn killer nanite if necessary

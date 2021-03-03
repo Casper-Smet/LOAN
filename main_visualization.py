@@ -3,7 +3,7 @@ from tornado import autoreload
 from tornado.ioloop import IOLoop
 
 from loan.model import HumanModel
-from loan.visualization import tiles, model_params
+from loan.visualization import model_params, tiles
 
 
 class Server(ModularServer):
@@ -16,6 +16,7 @@ class Server(ModularServer):
         self.listen(self.port)
         autoreload.start()
         IOLoop.current().start()
+
 
 server = Server(HumanModel, tiles, "Human Model", model_params)
 server.launch(port=8581)
