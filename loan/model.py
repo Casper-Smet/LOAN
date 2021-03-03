@@ -56,7 +56,7 @@ class HumanModel(Model):
             # add to agent list
             self.agents.append(agent)
 
-        agentfactory = AgentFactory(self.factory_location)
+        agentfactory = AgentFactory(0, self, self.factory_location)
         self.grid.place_agent(agentfactory, agentfactory.pos)
         self.schedule.add(agentfactory)
 
