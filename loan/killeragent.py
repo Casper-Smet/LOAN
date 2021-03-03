@@ -3,8 +3,8 @@ from mesa import Agent, Model
 
 class KillerAgent(Agent):
 
-    def __init__(self, unique_id: int, model: Model, creator, pos: int, target_location: int, target_disease: str) -> None:
-        super().__init__(unique_id, model)
+    def __init__(self, model: Model, creator, pos: int, target_location: int, target_disease: str) -> None:
+        super().__init__(model)
         self.creator = creator
         self.pos = pos
         self.target_location = target_location
