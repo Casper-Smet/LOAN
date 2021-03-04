@@ -1,9 +1,9 @@
 from mesa.visualization.ModularVisualization import VisualizationElement
 from mesa.visualization.modules import ChartModule
 
-from loan.helpers import give_node_positions, node_positions_on_canvas
-from loan.helperagent import HelperAgent
 from loan.agentfactory import AgentFactory
+from loan.helperagent import HelperAgent
+from loan.helpers import give_node_positions, node_positions_on_canvas
 from loan.killeragent import KillerAgent
 
 
@@ -73,8 +73,8 @@ def set_colour(heat_value):
 
 
 health_chart = ChartModule([{"Label": "Hitpoints",
-                      "Color": "Red"}],
-                      data_collector_name='datacollector')
+                             "Color": "Red"}],
+                           data_collector_name='datacollector')
 
 
 tiles = [NetworkModule(network_portrayal, 700, 800), health_chart]

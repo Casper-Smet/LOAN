@@ -1,6 +1,7 @@
-from mesa import Agent, Model
 from collections import namedtuple
+
 import networkx as nx
+from mesa import Agent, Model
 
 
 class KillerAgent(Agent):

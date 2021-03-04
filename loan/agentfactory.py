@@ -2,8 +2,8 @@ from uuid import uuid1
 
 from mesa import Agent, Model
 
-from loan.killeragent import KillerAgent
 from loan.helperagent import HelperAgent
+from loan.killeragent import KillerAgent
 
 
 class AgentFactory(Agent):
@@ -13,10 +13,10 @@ class AgentFactory(Agent):
         self.pos = pos
         self.helper_agents_with_alerts = []     # A list with agents on the factory position that have found a illness
         self.library_of_diseases = []           # A list with previously encountered illness
-        self.nanite_queue = []                  # 
-        self.nanite_to_spawn = None             # 
-        self.newly_found_disease = None         # 
-        self.spawned_killer_locations = []      # 
+        self.nanite_queue = []                  #
+        self.nanite_to_spawn = None             #
+        self.newly_found_disease = None         #
+        self.spawned_killer_locations = []      #
 
     def perceive(self) -> None:
         # agents visiting on own position carrying alerts for diseases on certain nodes

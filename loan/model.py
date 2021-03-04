@@ -1,8 +1,8 @@
+import copy
 from pathlib import Path
 from typing import List
 
 import networkx as nx
-import copy
 from mesa import Model
 from mesa.datacollection import DataCollector
 from mesa.space import NetworkGrid
@@ -193,7 +193,7 @@ class HumanModel(Model):
         """
         return self.schedule.steps
 
-    def get_neighbors(self, vertex) -> List:
+    def get_neighbors(self, vertex) -> List[int]:
         """Gets list of neighbor vertices of given vertex.
 
         :return: HumanModel's neighbors of vertex

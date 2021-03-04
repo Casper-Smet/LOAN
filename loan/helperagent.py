@@ -92,7 +92,7 @@ class HelperAgent(Agent):
         self.perception["cur_pos_illness_type"] = self.model.cell_properties[self.pos]["illness_type"]
         # Perceive the heat value of the neighboring vertices
         self.perception["cur_pos_neighbor_heat_values"] = {neigh: self.model.cell_properties[neigh]["heat_value"]
-                                                            for neigh in self.model.get_neighbors(self.pos)}  # String
+                                                           for neigh in self.model.get_neighbors(self.pos)}  # String
 
     def act(self) -> None:
         """Action-selection based on perception.
@@ -119,7 +119,7 @@ class HelperAgent(Agent):
             else:
                 path, step_cost, energy_costs = self._best_path(self._perceive_paths(self.factory_location))
                 self.next_state = HelperAgent.NextState(target=path[1], energy_cost=energy_costs[0])
-            
+
         # Current vertex is not ill, so go with the flow!
         else:
             # Get the adjacent edges of the current vertex

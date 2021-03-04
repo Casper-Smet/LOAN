@@ -29,8 +29,7 @@ def graph_from_json(fp: Path, against_weight: int = 4, with_weight: int = 2, nam
 
 
 def give_node_positions():
-    """Returns the node positions.
-    """
+    """Returns the node positions."""
     pos = {14: (1, 0), 12: (1, 1), 13: (0, 1), 11: (2, 1), 10: (1, 2), 9: (2, 2), 8: (0, 3),
            7: (1, 3), 6: (2, 3), 5: (0, 4), 4: (1, 4), 3: (2, 4), 2: (1, 5), 1: (1, 6)}
     return pos
