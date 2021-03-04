@@ -1,9 +1,9 @@
 import copy
 from pathlib import Path
 from typing import List
+from uuid import uuid1
 
 import networkx as nx
-from uuid import uuid1
 from mesa import Model
 from mesa.datacollection import DataCollector
 from mesa.space import NetworkGrid
@@ -47,11 +47,9 @@ class HumanModel(Model):
         self.max_helperagent_energy = max_helperagent_energy
 
         # store the properties of the vertices into an dictionary
-        props = {
-                "heat_value": 0.0,    # float -> between 1.0 and 0.0
-                "is_ill": False,      # bool -> if the current vertex is ill
-                "illness_type": None  # str -> current illness (if the vertex is ill)
-                }  
+        props = {"heat_value": 0.0,    # float -> between 1.0 and 0.0
+                 "is_ill": False,      # bool -> if the current vertex is ill
+                 "illness_type": None}  # str -> current illness (if the vertex is ill)
 
         self.cell_properties = {x: copy.deepcopy(props) for x in self.network.nodes}
 
@@ -69,12 +67,10 @@ class HumanModel(Model):
         self.grid.place_agent(agentfactory, agentfactory.pos)
         self.schedule.add(agentfactory)
 
-        self.datacollector = DataCollector(model_reporters={
-            "Hitpoints": "hitpoints",
-            "Ill vertices": "ill_vertices",
-            "Helper Agents alive": "alive_helper_agents",
-            "Helper Agents energy": "total_energy_agents"
-            })
+        self.datacollector = DataCollector(model_reporters={"Hitpoints": "hitpoints",
+                                                            "Ill vertices": "ill_vertices",
+                                                            "Helper Agents alive": "alive_helper_agents",
+                                                            "Helper Agents energy": "total_energy_agents"})
         self.running = True
 
     def hurt(self):
@@ -103,7 +99,7 @@ class HumanModel(Model):
             self.cell_properties.get(vertex)["is_ill"] = True
             self.cell_properties.get(vertex)["illness_type"] = self._get_random_sickness()
             self.cell_properties.get(vertex)["heat_value"] = 1.0
-            
+
         for v in self.get_neighbors(vertex):
             self._update_neighbor_based_status_vertex(v)
 
@@ -118,7 +114,7 @@ class HumanModel(Model):
                 self.cell_properties.get(vertex)["heat_value"] = 0.5
             else:
                 self.cell_properties.get(vertex)["heat_value"] = 0.0
-    
+
     def _set_random_vertex_to_ill(self):
         """Sets a random node to ill"""
         options = set(self.network.nodes) - set(self.ill_vertices)
@@ -127,7 +123,6 @@ class HumanModel(Model):
 
         # update the cell properties of the current vertex
         self._update_illness_status(vertex, False)
-
 
     def step(self):
         # All vertices that are still ill since last round hurt the human

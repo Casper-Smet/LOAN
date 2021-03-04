@@ -137,7 +137,7 @@ class HelperAgent(Agent):
                 neigh_with_highest_heat = max(neighbors, key=lambda n: self.model.cell_properties[n]["heat_value"])
                 highest_heat = self.model.cell_properties[neigh_with_highest_heat]["heat_value"]
                 filtered = list(filter(lambda n: self.model.cell_properties[n]["heat_value"] == highest_heat, neighbors))
-                
+
             # Set the next state.
             new_target = self.model.random.choice(filtered)
             self.next_state = HelperAgent.NextState(target=new_target, energy_cost=self._path_cost([self.pos, new_target])[0])

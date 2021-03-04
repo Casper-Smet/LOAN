@@ -69,23 +69,17 @@ def set_colour(heat_value):
     return colour
 
 
-health_chart = ChartModule([{
-    "Label": "Hitpoints",
-    "Color": "Red"
-    }], data_collector_name='datacollector')
+health_chart = ChartModule([{"Label": "Hitpoints", "Color": "Red"}],
+                           data_collector_name='datacollector')
 
-helperagent_chart = ChartModule([{
-    "Label": "Helper Agents energy",
-    "Color": "Blue"
-    }], data_collector_name='datacollector')
+helperagent_chart = ChartModule([{"Label": "Helper Agents energy", "Color": "Blue"}],
+                                data_collector_name='datacollector')
 
 tiles = [NetworkModule(network_portrayal, 500, 600), health_chart, helperagent_chart]
 
 textvalue = """Welcome to your body"""
 
-model_params = {
-    "how_to": UserSettableParameter('static_text', value=textvalue),
-    "N": UserSettableParameter("slider", "Number of helper agents", 1, 1, 10, 1),
-    "hitpoints": UserSettableParameter("slider", "Max hitpoints", 150, 1, 1000, 1),
-    "max_helperagent_energy": UserSettableParameter("slider", "Max energy of agents", 100, 1, 500, 1),
-}
+model_params = {"how_to": UserSettableParameter('static_text', value=textvalue),
+                "N": UserSettableParameter("slider", "Number of helper agents", 1, 1, 10, 1),
+                "hitpoints": UserSettableParameter("slider", "Max hitpoints", 150, 1, 1000, 1),
+                "max_helperagent_energy": UserSettableParameter("slider", "Max energy of agents", 100, 1, 500, 1)}

@@ -14,7 +14,7 @@ class AgentFactory(Agent):
         self.helper_agents_with_alerts = []     # A list with agents on the factory position that have found a illness
         self.library_of_diseases = []           # A list with previously encountered illness
         self.nanite_queue = []                  #
-        self.killer_agents_to_spawn = []             #
+        self.killer_agents_to_spawn = []        #
         self.newly_found_disease = None         #
 
     def perceive(self) -> None:
@@ -24,19 +24,16 @@ class AgentFactory(Agent):
 
     def act(self) -> None:
         for helper_agent in self.helper_agents_with_alerts:
-
             target, disease = helper_agent.alert_for_disease_on_node
 
             # check if disease is known
             if disease in self.library_of_diseases:
-
                 # send killer nanite immediately to location if disease is known
                 self.killer_agents_to_spawn.append(KillerAgent(uuid1().int, self.model, self, self.pos, target, disease))
 
             else:
                 # new disease
                 self.newly_found_disease = disease
-
                 # make killer nanite wait for one or more timesteps by adding to queue
                 self.nanite_queue.append(KillerAgent(uuid1().int, self.model, self, self.pos, target, disease))
 

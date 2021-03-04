@@ -12,7 +12,7 @@ def run_batch(iterations=100, max_steps=100, use_mp: bool = True, network_path: 
     variable_params = {"factory_location": tuple(range(1, 15))}
 
     runner = BatchRunnerMP if use_mp else BatchRunner
-    
+
     batch_run = runner(HumanModel,
                        variable_params,
                        fixed_params,
