@@ -12,11 +12,11 @@ class HelperAgent(Agent):
      - Act
      - Update
     """
-    INIT_ENERGY = 100
     NextState = namedtuple("NextState", ["target", "energy_cost"], defaults=[None, 0])
 
-    def __init__(self, unique_id: int, model: Model, pos: int, energy: int = INIT_ENERGY):
+    def __init__(self, unique_id: int, model: Model, pos: int, energy: int):
         super().__init__(unique_id, model)
+        self.init_energy = energy
         self.energy = energy
         self.pos = pos
         # self.model.grid.place_agent(self, self.pos)
@@ -133,15 +133,13 @@ class HelperAgent(Agent):
                 neigh_with_lowest_cost = min(neighbors, key=lambda n: self._path_cost([self.pos, n])[0])
                 lowest_cost = self._path_cost([self.pos, neigh_with_lowest_cost])[0]
                 filtered = list(filter(lambda n: self._path_cost([self.pos, n])[0] == lowest_cost, neighbors))
-                new_target = self.model.random.choice(filtered)
             else:  # Path with heigest heat value
                 neigh_with_highest_heat = max(neighbors, key=lambda n: self.model.cell_properties[n]["heat_value"])
                 highest_heat = self.model.cell_properties[neigh_with_highest_heat]["heat_value"]
                 filtered = list(filter(lambda n: self.model.cell_properties[n]["heat_value"] == highest_heat, neighbors))
-                new_target = self.model.random.choice(filtered)
-            # Select the target vertex based on inflammation value, go to neighbor with highest temperature
-
+                
             # Set the next state.
+            new_target = self.model.random.choice(filtered)
             self.next_state = HelperAgent.NextState(target=new_target, energy_cost=self._path_cost([self.pos, new_target])[0])
 
         self.going_with_the_flow = self.next_state.energy_cost < 4  # Determine if the dynamo should recharge the helperagent
@@ -156,7 +154,7 @@ class HelperAgent(Agent):
 
         # Gain energy by recharging via dynamo
         if self.going_with_the_flow:
-            self.energy = min(self.energy + 3, HelperAgent.INIT_ENERGY)  # Cap the energy of the agent if the 'battery' is full
+            self.energy = min(self.energy + 3, self.init_energy)  # Cap the energy of the agent if the 'battery' is full
 
         # TODO: Consider moving this code to the environment
         if self.energy <= 0:  # If no energy left, agent is dead.

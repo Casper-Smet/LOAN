@@ -1,0 +1,33 @@
+# THIS IS NOTEBOOK DINGES.
+
+# Implementatie van biologisch geïnspireerde AI
+
+## Aanvulling/aanpassing op eerder geïmplementeerde agent-based simulation
+Hier is uiteindelijk gekozen om een deel van het afweersysteem te ontwikkelen.
+Hierbij wordt allereerst een HelperNanite geïmplementeerd die als taak heeft om de omgeving af te zoeken naar zieke vertices.
+Tijdens het zoeken kan hij gebruik maken van het feit dat een zieke vertex last heeft van inflammation en dat deze om deze reden hitte afgeeft.
+Deze hitte heeft impact op de directe buren die op hun beurt ook warm worden (maar deze wel verminderd is ten opzichte van de zieke vertex).
+De HelperNanite kan deze hitte gebruiken om te zoeken naar zieke vertices.  
+
+Wanneer de HelperNanite een zieke vertex gevonden heeft wilt hij dit zo snel mogelijk doorgeven aan de NaniteFactory (die een lymfeknoop voorstelt).
+De NaniteFactory gaat bij dit signaal allereerst kijken of hij deze ziekte en zieke vertex al aan het behandelen is. Als dat klopt dan hoeft hij verder niets te doen.
+Wanneer dit niet het geval is wordt er gekeken of de ziekte al eerder langsgekomen is (bestaan er nog Tc-geheugencellen voor).
+Als deze 
+
+
+## Experimentatie op effect aanpassingen
+
+
+# Beschouwing van de impact van het werk
+
+## Hoe verhouden jouw experimenten zich toch experimenten in je bronnen? Is het een uitbreiding, verdieping, herhaling, etc?
+
+
+## Welke relatie zie je tussen de resultaten van jouw experimenten en je bronnen? Verklaar die relatie.
+
+
+## Hoe zou jouw simulatie gebruikt worden in nader onderzoek naar artificiële en/of biologische intelligentie?
+
+
+# Verwijzingen
+- 

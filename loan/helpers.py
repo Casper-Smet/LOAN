@@ -7,7 +7,7 @@ import networkx as nx
 import numpy as np
 
 
-def graph_from_json(fp: Path, against_weight: int = 10, with_weight: int = 2, name: str = "HumanBody"):
+def graph_from_json(fp: Path, against_weight: int = 6, with_weight: int = 2, name: str = "HumanBody"):
     """Loads a graph from given filepath.
 
     Each row in `network` represents an edge and contains an array with 3 elements.

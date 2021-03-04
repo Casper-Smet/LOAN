@@ -1,5 +1,6 @@
 from mesa.visualization.ModularVisualization import VisualizationElement
 from mesa.visualization.modules import ChartModule
+from mesa.visualization.UserParam import UserSettableParameter
 
 from loan.agentfactory import AgentFactory
 from loan.helperagent import HelperAgent
@@ -24,7 +25,6 @@ class NetworkModule(VisualizationElement):
 
 
 def network_portrayal(model):
-
     new_positions = node_positions_on_canvas(give_node_positions())
     portrayal = {}
     portrayal["nodes"] = [{"id": node_id,
@@ -39,11 +39,8 @@ def network_portrayal(model):
                            "type": "curvedArrow",
                            "source": source,
                            "target": target,
-                           "label": "thies",
                            "color": "#000000"}
                           for edge_id, (source, target, _) in enumerate(model.network.edges)]
-
-    portrayal["energy"] = model.agents[0].energy
 
     return portrayal
 
@@ -72,13 +69,23 @@ def set_colour(heat_value):
     return colour
 
 
-health_chart = ChartModule([{"Label": "Hitpoints",
-                             "Color": "Red"}],
-                           data_collector_name='datacollector')
+health_chart = ChartModule([{
+    "Label": "Hitpoints",
+    "Color": "Red"
+    }], data_collector_name='datacollector')
 
-agent_chart = ChartModule([{"Label": "Helper Agents energy",
-                             "Color": "Blue"}],
-                           data_collector_name='datacollector')
+helperagent_chart = ChartModule([{
+    "Label": "Helper Agents energy",
+    "Color": "Blue"
+    }], data_collector_name='datacollector')
 
-tiles = [NetworkModule(network_portrayal, 700, 800), health_chart, agent_chart]
-model_params = {}
+tiles = [NetworkModule(network_portrayal, 500, 600), health_chart, helperagent_chart]
+
+textvalue = """Welcome to your body"""
+
+model_params = {
+    "how_to": UserSettableParameter('static_text', value=textvalue),
+    "N": UserSettableParameter("slider", "Number of helper agents", 1, 1, 10, 1),
+    "hitpoints": UserSettableParameter("slider", "Max hitpoints", 150, 1, 1000, 1),
+    "max_helperagent_energy": UserSettableParameter("slider", "Max energy of agents", 100, 1, 500, 1),
+}
