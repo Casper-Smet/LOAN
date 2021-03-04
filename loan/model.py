@@ -19,7 +19,7 @@ class HumanModel(Model):
     in the simulation and gathering data.
     """
     # CONSTANTINOPLE (the birthplace of the constant)
-    INIT_HITPOINTS = 60
+    INIT_HITPOINTS = 100
     ILLNESS_CHANCE = 0.2
     INTERSECT_ASTRAY_CHANCE = 0.2
     MAX_ILL_VERTICES = 4
@@ -133,6 +133,7 @@ class HumanModel(Model):
         # All vertices that are still ill since last round hurt the human
         self.hurt()
         if self.hitpoints < 1:
+            print("Body is dead")
             self.running = False
             return
 

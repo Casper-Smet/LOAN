@@ -142,6 +142,7 @@ class HelperAgent(Agent):
 
         # TODO: Consider moving this code to the environment
         if self.energy <= 0:  # If no energy left, agent is dead.
+            print("Agent is dead")
             self.model.grid._remove_agent(self, self.pos)
             self.model.schedule.remove(self)
             # self.model.running = False
