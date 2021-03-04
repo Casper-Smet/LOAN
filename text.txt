@@ -3,31 +3,54 @@
 ## Implementatie van biologisch geïnspireerde AI
 
 ### Aanvulling/aanpassing op eerder geïmplementeerde agent-based simulation
-Hier is uiteindelijk gekozen om een deel van het afweersysteem te ontwikkelen.
-Hierbij wordt allereerst een HelperNanite geïmplementeerd die als taak heeft om de omgeving af te zoeken naar zieke vertices.
-Tijdens het zoeken kan hij gebruik maken van het feit dat een zieke vertex last heeft van inflammation en dat deze om deze reden hitte afgeeft.
-Deze hitte heeft impact op de directe buren die op hun beurt ook warm worden (maar deze wel verminderd is ten opzichte van de zieke vertex).
-De HelperNanite kan deze hitte gebruiken om te zoeken naar zieke vertices.  
+Hier is gekozen om een deel van het afweersysteem te ontwikkelen. Er is allereerst een `HelperNanite` geïmplementeerd die als taak heeft om de omgeving af te zoeken naar zieke vertices.
+Tijdens het zoeken kan de `HelperNanite` gebruik maken van het feit dat een zieke vertex last heeft van inflammatie en dat de vertex om deze reden hitte afgeeft.
+De hitte heeft impact op de directe buur-vertices die op hun beurt ook warm worden (maar wel minder warm ten opzichte van de zieke vertex).
+De `HelperNanite` kan deze hitte gebruiken om te zoeken naar zieke vertices.
 
-Wanneer de HelperNanite een zieke vertex gevonden heeft wilt hij dit zo snel mogelijk doorgeven aan de NaniteFactory (die een lymfeknoop voorstelt).
-De NaniteFactory gaat bij dit signaal allereerst kijken of hij deze ziekte en zieke vertex al aan het behandelen is. Als dat klopt dan hoeft hij verder niets te doen.
-Wanneer dit niet het geval is wordt er gekeken of de ziekte al eerder langsgekomen is (bestaan er nog Tc-geheugencellen voor).
-Als deze 
+Wanneer de `HelperNanite` een zieke vertex gevonden heeft, wilt de `HelperNanite` dit zo snel mogelijk doorgeven aan de `NaniteFactory`.
+De `NaniteFactory` representeerd een lymfeknoop en bevindt zich altijd op één vaste vertex in het lichaam.
+De `NaniteFactory` gaat bij dit signaal allereerst kijken of de specifieke ziekte al bij de vertex behandeld wordt.
+Als dat zo is, dan hoeft de `NaniteFactory` verder niets te doen.
+Wanneer de desbetreffende ziekte nog niet wordt behandeld bij de zieke vertex, wordt er gekeken of de ziekte al eerder voortgekomen is  bij de `NaniteFactory` (bestaan er nog Tc-geheugencellen voor).
+Zo ja, dan kan de `NaniteFactory` direct een `KillerNanite` op de zieke vertex afsturen.
+Zo nee, dan zal de `NaniteFactory` eerst een antigen moeten produceren en wordt de `KillerNanite` pas één stap later op pad gestuurd.
 
+De `KillerNanite` zal op zijn beurt afreizen naar het door de `NaniteFactory` verkregen doel. Dit doet de `KillerNanite` op basis van het kortse pad.
+De `KillerNanite` is in staat om specifiek de door de `NaniteFactory` gemelde ziekte te stoppen bij de zieke vertex.
+De `KillerNanite` is niet in staat om onderweg vertices met dezelfde of andere ziekten te helen.
+Zodra de `KillerNanite` de desbetreffende zieke vertex heeft bereikt, geneest deze de zieke vertex direct.
+Vervolgens stuurt de `KillerNanite` een BloodTooth signaal naar de `NaniteFactory` dat de zieke vertex is genezen.
+De taak van de `KillerNanite` zit erop en deze raakt in de vergetelheid van de `NaniteFactory` en het lichaam.
 
 ### Experimentatie op effect aanpassingen
+
+Het lichaam bestaat uit veertien vertices. De `NaniteFactory` kan op iedere vertex geplaats worden.
+Ook de vertex waar de `NaniteFactory` zich bevindt, kan ziek raken. Iedere zieke vertex vermindert het aantal hitpoints van het lichaam met één
+gedurende iedere stap. In de experimenten wordt gemeten hoelang het lichaam overleeft.
+Tijdens ieder experiment wisselt enkel de `NaniteFactory` van positie, de overige parameters blijven onveranderd.
+Op deze manier trachten wij de beste locatie in het lichaam te bepalen voor de `NaniteFactory`. Immers, hoe langer het lichaam in leven blijft, hoe beter.
 
 
 ## Beschouwing van de impact van het werk
 
 ### Hoe verhouden jouw experimenten zich toch experimenten in je bronnen? Is het een uitbreiding, verdieping, herhaling, etc?
-
+Allereerst wordt in de experimenten uit de paper een grid gebruikt als omgeving van de simulatie, waarbij wij gebruik maken van een Netwerk Grid.
+Ook wordt de focus in de paper gelegd op het herkennen en onthouden van bepaalde ziektes, en het muteren van cellen om bepaalde ziektes te herkennen.
+Wij nemen dit gedeelte ook mee in onze simulatie, echter bouwen we ook vernietiging van ziektes in.
 
 ### Welke relatie zie je tussen de resultaten van jouw experimenten en je bronnen? Verklaar die relatie.
-
+Door het hele lichaam zitten lymfeklieren. 
 
 ### Hoe zou jouw simulatie gebruikt worden in nader onderzoek naar artificiële en/of biologische intelligentie?
 
+Toekomstig onderzoek is gebaat bij het bepalen van de ideale positie voor de `NaniteFactory`. Ondanks dat het fysiek nog onmogelijk is om nanites
+te fabriceren en te injecteren in het lichaam, kan het gedrag van deze nanites wel al onderzocht worden.
 
 ## Verwijzingen
-- 
+- Hart, E., & Davoudani, D. (2011). An Engineering-Informed Modelling Approach to AIS. Lecture Notes in Computer Science, 240–253. https://www.napier.ac.uk/~/media/worktribe/output-202676/icaris20111pdf.pdf
+- Binas, 5de druk:
+    - 84L Immuniteit
+    - 84N Lymfevaten en lymfoïde organen
+- Wikipedia-bijdragers. (2021, 2 maart). Lymfevatenstelsel. Wikipedia. https://nl.wikipedia.org/wiki/Lymfevatenstelsel
+- Kanker.nl. (z.d.). Lymfestelsel. Geraadpleegd op 4 maart 2021, van https://www.kanker.nl/gevolgen-van-kanker/lymfoedeem/wat-is/lymfestelsel
