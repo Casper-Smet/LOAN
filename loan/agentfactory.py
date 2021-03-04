@@ -14,7 +14,7 @@ class AgentFactory(Agent):
         self.helper_agents_with_alerts = []     # A list with agents on the factory position that have found a illness
         self.library_of_diseases = []           # A list with previously encountered illness
         self.nanite_queue = []                  #
-        self.nanite_to_spawn = None             #
+        self.killer_agents_to_spawn = []             #
         self.newly_found_disease = None         #
 
     def perceive(self) -> None:
@@ -34,7 +34,7 @@ class AgentFactory(Agent):
             if disease in self.library_of_diseases:
 
                 # send killer nanite immediately to location if disease is known
-                self.nanite_to_spawn = KillerAgent(next_id, self.model, self, self.pos, target, disease)
+                self.killer_agents_to_spawn.append(KillerAgent(next_id, self.model, self, self.pos, target, disease))
 
             else:
                 # new disease
@@ -44,8 +44,8 @@ class AgentFactory(Agent):
                 self.nanite_queue.append(KillerAgent(next_id, self.model, self, self.pos, target, disease))
 
         # spawn the longest waiting killer nanite
-        if len(self.nanite_queue): # and self.nanite_to_spawn is None
-            self.nanite_to_spawn = self.nanite_queue.pop()
+        if len(self.nanite_queue):
+            self.killer_agents_to_spawn.append(self.nanite_queue.pop())
 
     def update(self) -> None:
         # reset alert_for_disease_on_node for helper agents
@@ -53,10 +53,10 @@ class AgentFactory(Agent):
             helper_agent.alert_for_disease_on_node = False
 
         # spawn killer nanite
-        if self.nanite_to_spawn is not None:
-            self.model.grid.place_agent(self.nanite_to_spawn, self.pos)
-            self.model.schedule.add(self.nanite_to_spawn)
-            self.nanite_to_spawn = None
+        for agent in self.killer_agents_to_spawn:
+            self.model.grid.place_agent(agent, self.pos)
+            self.model.schedule.add(agent)
+            self.killer_agents_to_spawn.remove(agent)
 
         # update disease library
         if self.newly_found_disease is not None:
