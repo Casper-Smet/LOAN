@@ -1,8 +1,8 @@
 # THIS IS NOTEBOOK DINGES.
 
-# Implementatie van biologisch geïnspireerde AI
+## Implementatie van biologisch geïnspireerde AI
 
-## Aanvulling/aanpassing op eerder geïmplementeerde agent-based simulation
+### Aanvulling/aanpassing op eerder geïmplementeerde agent-based simulation
 Hier is uiteindelijk gekozen om een deel van het afweersysteem te ontwikkelen.
 Hierbij wordt allereerst een HelperNanite geïmplementeerd die als taak heeft om de omgeving af te zoeken naar zieke vertices.
 Tijdens het zoeken kan hij gebruik maken van het feit dat een zieke vertex last heeft van inflammation en dat deze om deze reden hitte afgeeft.
@@ -15,19 +15,19 @@ Wanneer dit niet het geval is wordt er gekeken of de ziekte al eerder langsgekom
 Als deze 
 
 
-## Experimentatie op effect aanpassingen
+### Experimentatie op effect aanpassingen
 
 
-# Beschouwing van de impact van het werk
+## Beschouwing van de impact van het werk
 
-## Hoe verhouden jouw experimenten zich toch experimenten in je bronnen? Is het een uitbreiding, verdieping, herhaling, etc?
-
-
-## Welke relatie zie je tussen de resultaten van jouw experimenten en je bronnen? Verklaar die relatie.
+### Hoe verhouden jouw experimenten zich toch experimenten in je bronnen? Is het een uitbreiding, verdieping, herhaling, etc?
 
 
-## Hoe zou jouw simulatie gebruikt worden in nader onderzoek naar artificiële en/of biologische intelligentie?
+### Welke relatie zie je tussen de resultaten van jouw experimenten en je bronnen? Verklaar die relatie.
 
 
-# Verwijzingen
+### Hoe zou jouw simulatie gebruikt worden in nader onderzoek naar artificiële en/of biologische intelligentie?
+
+
+## Verwijzingen
 - 
