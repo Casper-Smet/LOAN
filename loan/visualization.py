@@ -1,4 +1,5 @@
 from mesa.visualization.ModularVisualization import VisualizationElement
+from mesa.visualization.modules import ChartModule
 
 from loan.helpers import give_node_positions, node_positions_on_canvas
 from loan.helperagent import HelperAgent
@@ -7,7 +8,7 @@ from loan.killeragent import KillerAgent
 
 
 class NetworkModule(VisualizationElement):
-    package_includes = ["sigma.min.js", "sigma.js"]
+    package_includes = ["sigma.min.js"]
     local_includes = ["loan/js/GraphNetwork.js"]
 
     def __init__(self, portrayal_method, canvas_height=700, canvas_width=600):
@@ -71,5 +72,10 @@ def set_colour(heat_value):
     return colour
 
 
-tiles = [NetworkModule(network_portrayal, 700, 800)]
+health_chart = ChartModule([{"Label": "Hitpoints",
+                      "Color": "Red"}],
+                      data_collector_name='datacollector')
+
+
+tiles = [NetworkModule(network_portrayal, 700, 800), health_chart]
 model_params = {}
