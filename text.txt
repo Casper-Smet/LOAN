@@ -35,17 +35,33 @@ Op deze manier trachten wij de beste locatie in het lichaam te bepalen voor de `
 ## Beschouwing van de impact van het werk
 
 ### Hoe verhouden jouw experimenten zich toch experimenten in je bronnen? Is het een uitbreiding, verdieping, herhaling, etc?
-Allereerst wordt in de experimenten uit de paper een grid gebruikt als omgeving van de simulatie, waarbij wij gebruik maken van een Netwerk Grid.
-Ook wordt de focus in de paper gelegd op het herkennen en onthouden van bepaalde ziektes, en het muteren van cellen om bepaalde ziektes te herkennen.
+Allereerst wordt in de experimenten uit de paper van 'Hart, E., & Davoudani, D. (2011)' een grid gebruikt als omgeving van de simulatie,
+waar wij gebruik maken van een Netwerk Grid.
+In de paper wordt ingezoomd op een klein stukje van het lichaam, waar in onze simulatie de stromen door het gehele menselijk lichaam worden gesimuleerd.
+De focus in de paper gelegd op het herkennen en onthouden van bepaalde ziektes,
+en het muteren van cellen om bepaalde ziektes te herkennen.
 Wij nemen dit gedeelte ook mee in onze simulatie, echter bouwen we ook vernietiging van ziektes in.
+Daarmee is onze simulatie een uitbreiding op de simulatie uit de paper van 'Hart, E., & Davoudani, D. (2011)'.
+Onze simulatie is voor nu ook nog single-agent based i.p.v. multi-agent based.
 
 ### Welke relatie zie je tussen de resultaten van jouw experimenten en je bronnen? Verklaar die relatie.
-Door het hele lichaam zitten lymfeklieren. 
+In de paper van Hart & Davoudani wordt het lymfesysteem vanuit een engineering-kant bekeken.
+Hierbij is een model ontwikkeld waarin de complexe immunologische processen in een lichaam vereenvoudigd zijn om hieruit een prototype te vervaardigen.
+Dit model kan, alhoewel het biologisch niet geheel accuraat is, gebruikt worden om te helpen in de ontwikkeling van dit soort systemen.
+In de paper worden echter geen expliciete experimenten uitgevoerd.  
+Op de website van Kanker.nl wordt aangegeven dat door het hele lichaam lymfeklieren aanwezig zijn.
+Verder zijn er op verschillende plekken in het lichaam groepen lymfeklieren. Zo zitten er belangrijke groepen lymfeklieren in de hals, langs de luchtpijp, in de oksels, bij de longen, in de buikholte, in het bekken en in de liezen.  
+Alhoewel wij hier geen bron voor hebben kunnen vinden kan hier geobserveerd worden dat deze 'belangrijke' groepen zich redelijk centraal in het lichaam bevinden.
+In de resultaten valt te zien dat dat het lichaam over het algemeen minder lang leeft wanneer de `node` die zich helemaal bovenin bevindt (node 1) de node is waar de `NaniteFactory` zich bevindt.
+Buiten dit valt er geen significant bewijs te leveren dat de plaats van een `NaniteFactory` uitmaakt voor de levensduur van het lichaam.
 
 ### Hoe zou jouw simulatie gebruikt worden in nader onderzoek naar artificiële en/of biologische intelligentie?
 
 Toekomstig onderzoek is gebaat bij het bepalen van de ideale positie voor de `NaniteFactory`. Ondanks dat het fysiek nog onmogelijk is om nanites
-te fabriceren en te injecteren in het lichaam, kan het gedrag van deze nanites wel al onderzocht worden.
+te fabriceren en te injecteren in het lichaam, kan het gedrag van deze nanites wel al onderzocht worden. In deze simulatie wordt de biologische
+intelligentie van het immuunsysteem uitgebreid met artificiële intelligentie van de verschillende nanites. De `NaniteFactory` kan gericht
+`KillerNanites` sturen naar zieke vertices en deze doen aan perfecte pathfinding. Toekomstig onderzoek moet uitwijzen of fysieke nanites in
+hetzelfde in staat zijn. De mate van intelligentie die fysiek past in de kleine nanites is onderwerp van verder onderzoek.
 
 ## Verwijzingen
 - Hart, E., & Davoudani, D. (2011). An Engineering-Informed Modelling Approach to AIS. Lecture Notes in Computer Science, 240–253. https://www.napier.ac.uk/~/media/worktribe/output-202676/icaris20111pdf.pdf
