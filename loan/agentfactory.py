@@ -16,7 +16,6 @@ class AgentFactory(Agent):
         self.nanite_queue = []                  #
         self.nanite_to_spawn = None             #
         self.newly_found_disease = None         #
-        self.spawned_killer_locations = []      #
 
     def perceive(self) -> None:
         # agents visiting on own position carrying alerts for diseases on certain nodes
@@ -27,9 +26,6 @@ class AgentFactory(Agent):
         for helper_agent in self.helper_agents_with_alerts:
 
             target, disease = helper_agent.alert_for_disease_on_node
-
-            # if target in self.spawned_killer_locations:
-            #     continue
 
             # Find the unique ID for the next agent
             next_id = uuid1().int
@@ -46,10 +42,9 @@ class AgentFactory(Agent):
 
                 # make killer nanite wait for one or more timesteps by adding to queue
                 self.nanite_queue.append(KillerAgent(next_id, self.model, self, self.pos, target, disease))
-                self.spawned_killer_locations.append(target)
 
         # spawn the longest waiting killer nanite
-        if len(self.nanite_queue) and self.nanite_to_spawn is None:
+        if len(self.nanite_queue): # and self.nanite_to_spawn is None
             self.nanite_to_spawn = self.nanite_queue.pop()
 
     def update(self) -> None:
@@ -61,20 +56,12 @@ class AgentFactory(Agent):
         if self.nanite_to_spawn is not None:
             self.model.grid.place_agent(self.nanite_to_spawn, self.pos)
             self.model.schedule.add(self.nanite_to_spawn)
-            self.spawned_killer_locations.append(self.nanite_to_spawn.target_location)
             self.nanite_to_spawn = None
 
         # update disease library
         if self.newly_found_disease is not None:
             self.library_of_diseases.append(self.newly_found_disease)
             self.newly_found_disease = None
-
-    # def kill_confirmed(self, location):
-    #     """"""
-    #     self.spawned_killer_locations.remove(location)
-    #     for agent in self.nanite_queue:
-    #         if agent.target_location == location:
-    #             self.nanite_queue.remove(agent)
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__} {self.model}/{self.unique_id}: Position {self.pos}"

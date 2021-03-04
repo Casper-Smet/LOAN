@@ -76,6 +76,9 @@ health_chart = ChartModule([{"Label": "Hitpoints",
                              "Color": "Red"}],
                            data_collector_name='datacollector')
 
+agent_chart = ChartModule([{"Label": "Helper Agents energy",
+                             "Color": "Blue"}],
+                           data_collector_name='datacollector')
 
-tiles = [NetworkModule(network_portrayal, 700, 800), health_chart]
+tiles = [NetworkModule(network_portrayal, 700, 800), health_chart, agent_chart]
 model_params = {}

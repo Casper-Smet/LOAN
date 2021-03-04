@@ -26,6 +26,7 @@ class HelperAgent(Agent):
         self.percept_sequence = []  # Holds information about the visited Vertices
         self.factory_location = self.model.factory_location
         self.alert_for_disease_on_node = False  # (location, disease)
+        self.going_with_the_flow = False
 
     def _move(self) -> None:
         """Moves the agent to the given vertex."""
@@ -103,33 +104,47 @@ class HelperAgent(Agent):
         """
         # Check whether the current vertex is ill
         if self.perception["cur_pos_is_ill"]:
+
             # Get shortest path to factory
             if not self.alert_for_disease_on_node:
                 self.alert_for_disease_on_node = (self.pos, self.perception["cur_pos_illness_type"])
-            # FIXME: Temporary fix for when factory_location gets sick
+
+            # factory_location gets sick
             if self.factory_location == self.pos:
                 self.next_state = HelperAgent.NextState(target=self.pos, energy_cost=0)
             else:
-                path, step_cost, energy_costs = self._best_path(self._perceive_paths(self.factory_location))
+                path, _, energy_costs = self._best_path(self._perceive_paths(self.factory_location))
                 self.next_state = HelperAgent.NextState(target=path[1], energy_cost=energy_costs[0])
 
         elif self.alert_for_disease_on_node:
             if self.factory_location == self.pos:
                 self.next_state = HelperAgent.NextState(target=self.pos, energy_cost=0)
             else:
-                path, step_cost, energy_costs = self._best_path(self._perceive_paths(self.factory_location))
+                path, _, energy_costs = self._best_path(self._perceive_paths(self.factory_location))
                 self.next_state = HelperAgent.NextState(target=path[1], energy_cost=energy_costs[0])
 
         # Current vertex is not ill, so go with the flow!
         else:
             # Get the adjacent edges of the current vertex
             neighbors = self.model.get_neighbors(self.pos)
+            neighbors_with_heatvalue = list(filter(lambda n: self.model.cell_properties[n]["heat_value"] > 0.0, neighbors))
+
+            if not neighbors_with_heatvalue:  # Path with lowest cost since there's no target
+                neigh_with_lowest_cost = min(neighbors, key=lambda n: self._path_cost([self.pos, n])[0])
+                lowest_cost = self._path_cost([self.pos, neigh_with_lowest_cost])[0]
+                filtered = list(filter(lambda n: self._path_cost([self.pos, n])[0] == lowest_cost, neighbors))
+                new_target = self.model.random.choice(filtered)
+            else:  # Path with heigest heat value
+                neigh_with_highest_heat = max(neighbors, key=lambda n: self.model.cell_properties[n]["heat_value"])
+                highest_heat = self.model.cell_properties[neigh_with_highest_heat]["heat_value"]
+                filtered = list(filter(lambda n: self.model.cell_properties[n]["heat_value"] == highest_heat, neighbors))
+                new_target = self.model.random.choice(filtered)
             # Select the target vertex based on inflammation value, go to neighbor with highest temperature
-            # TODO: Add probability
-            new_target = max(neighbors, key=lambda n: self.model.cell_properties[n]["heat_value"])
+
             # Set the next state.
-            self.next_state = HelperAgent.NextState(
-                target=new_target, energy_cost=self._path_cost([self.pos, new_target])[0])
+            self.next_state = HelperAgent.NextState(target=new_target, energy_cost=self._path_cost([self.pos, new_target])[0])
+
+        self.going_with_the_flow = self.next_state.energy_cost < 4  # Determine if the dynamo should recharge the helperagent
 
     def update(self) -> None:
         """Updates the current state of the agent."""
@@ -138,14 +153,18 @@ class HelperAgent(Agent):
 
         # Lower the energy of the agent because it moves
         self.energy -= self.next_state.energy_cost
-        # TODO: Add option to gain energy by recharging via dynamo
+
+        # Gain energy by recharging via dynamo
+        if self.going_with_the_flow:
+            self.energy = min(self.energy + 3, HelperAgent.INIT_ENERGY)  # Cap the energy of the agent if the 'battery' is full
 
         # TODO: Consider moving this code to the environment
         if self.energy <= 0:  # If no energy left, agent is dead.
-            print("Agent is dead")
             self.model.grid._remove_agent(self, self.pos)
             self.model.schedule.remove(self)
-            # self.model.running = False
+            self.model.alive_helper_agents -= 1
+
+        self.model.total_energy_agents = self.energy
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__} {self.model}/{self.unique_id}: Energy {self.energy}: Position {self.pos}"

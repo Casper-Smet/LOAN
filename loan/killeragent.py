@@ -26,11 +26,10 @@ class KillerAgent(Agent):
 
     def update(self) -> None:
         if self.arrived_on_location:
-            if self.target_location in self.model.ill_vertices:
-                self.model.restore_vertex(self.target_location)
+            if self.pos in self.model.ill_vertices:
+                self.model.restore_vertex(self.pos)
             self.model.grid._remove_agent(self, self.pos)
             self.model.schedule.remove(self)
-            # self.creator.kill_confirmed(self.target_location)  # bloodtooth signal
         else:
             self.model.grid.move_agent(self, self.shortest_path_to_target_node[1])
 

@@ -6,13 +6,14 @@ from loan.helpers import graph_from_json
 from loan.model import HumanModel
 
 
-def run_batch(iterations=50, max_steps=100, use_mp: bool = True, network_path: str = "./loan/data/network.json"):
+def run_batch(iterations=100, max_steps=100, use_mp: bool = True, network_path: str = "./loan/data/network.json"):
     graph = graph_from_json(Path(network_path))
     fixed_params = {"N": 1, "network": graph}
-    variable_params = {"illness_chance": [0.1, 0.2, 0.3, 0.4]}
+    variable_params = {"illness_chance": (0.2, 0.3, 0.4),
+                       "factory_location": tuple(range(1, 15))}
 
     runner = BatchRunnerMP if use_mp else BatchRunner
-
+    
     batch_run = runner(HumanModel,
                        variable_params,
                        fixed_params,
