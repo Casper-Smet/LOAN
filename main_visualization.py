@@ -18,5 +18,6 @@ class Server(ModularServer):
         IOLoop.current().start()
 
 
-server = Server(HumanModel, tiles, "Human Model", model_params)
-server.launch(port=8581)
+if __name__ == "__main__":
+    server = Server(HumanModel, tiles, "Human Model", model_params)
+    server.launch(port=8581)
