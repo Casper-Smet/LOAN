@@ -145,7 +145,7 @@ class HumanModel(Model):
         self.schedule.step()
 
         # Collect data
-        # self.datacollector.collect(self)
+        self.datacollector.collect(self)
 
     def restore_vertex(self, healed_vertex: int):
         """Gets a sign from an agent that an ill vertex has been healed."""
