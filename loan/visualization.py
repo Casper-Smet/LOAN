@@ -4,6 +4,7 @@ from mesa.visualization.UserParam import UserSettableParameter
 
 from loan.agentfactory import AgentFactory
 from loan.helperagent import HelperAgent
+from loan.greedyhelperagent import GreedyHelperAgent
 from loan.helpers import give_node_positions, node_positions_on_canvas
 from loan.killeragent import KillerAgent
 
@@ -49,10 +50,10 @@ def build_label(node_id, agents):
     """"""
     label = f"{node_id}"
     for agent in agents:
-        if isinstance(agent, HelperAgent):
-            label += " 🕵️"
         if isinstance(agent, AgentFactory):
             label += " 🏭"
+        if isinstance(agent, HelperAgent):
+            label += str(agent)
         if isinstance(agent, KillerAgent):
             label += " 💉"
     return label
@@ -70,16 +71,18 @@ def set_colour(heat_value):
 
 
 health_chart = ChartModule([{"Label": "Hitpoints", "Color": "Red"}],
-                           data_collector_name='datacollector')
+                           data_collector_name="datacollector")
 
 helperagent_chart = ChartModule([{"Label": "Helper Agents energy", "Color": "Blue"}],
-                                data_collector_name='datacollector')
+                                data_collector_name="datacollector")
 
 tiles = [NetworkModule(network_portrayal, 500, 600), health_chart, helperagent_chart]
 
-textvalue = """Welcome to your body"""
+textvalue = """Welcome to your body!"""
 
-model_params = {"how_to": UserSettableParameter('static_text', value=textvalue),
+model_params = {"how_to": UserSettableParameter("static_text", value=textvalue),
                 "N": UserSettableParameter("slider", "Number of helper agents", 1, 1, 10, 1),
                 "hitpoints": UserSettableParameter("slider", "Max hitpoints", 150, 1, 1000, 1),
-                "max_helperagent_energy": UserSettableParameter("slider", "Max energy of agents", 100, 1, 500, 1)}
+                "max_helperagent_energy": UserSettableParameter("slider", "Max energy of agents", 100, 1, 500, 1),
+                "helper_type": UserSettableParameter("choice", "Helper Type", value="helperagent", choices=["helperagent", "greedyhelperagent", "randomhelperagent"])}
+

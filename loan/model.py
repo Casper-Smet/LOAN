@@ -11,6 +11,7 @@ from mesa.time import StagedActivation
 
 from loan.agentfactory import AgentFactory
 from loan.helperagent import HelperAgent
+from loan.greedyhelperagent import GreedyHelperAgent
 from loan.helpers import graph_from_json
 
 
@@ -30,7 +31,7 @@ class HumanModel(Model):
 
     def __init__(self, N: int = NUM_AGENTS, network: nx.MultiDiGraph = GRAPH, hitpoints: int = INIT_HITPOINTS,
                  illness_chance: float = ILLNESS_CHANCE, max_ill_vertices: int = MAX_ILL_VERTICES, factory_location: int = None,
-                 max_helperagent_energy: int = INIT_ENERGY_HELPERAGENT):
+                 max_helperagent_energy: int = INIT_ENERGY_HELPERAGENT, helper_type: str = "helperagent"):
         self.num_agents = N
         self.hitpoints = hitpoints
         self._illness_chance = illness_chance
@@ -45,6 +46,15 @@ class HumanModel(Model):
         self.alive_helper_agents = 0
         self.total_energy_agents = 0
         self.max_helperagent_energy = max_helperagent_energy
+        
+        if (helper_type := helper_type.lower()) == "helperagent":
+            self.helper_type = HelperAgent
+        elif helper_type == "greedyhelperagent":
+            self.helper_type = GreedyHelperAgent
+        elif helper_type == "randomhelperagent":
+            self.helper_type = GreedyHelperAgent  # TODO: Change to RandomHelperAgent
+        else:
+            raise ValueError("Invalid helper_type: {helper_type}")
 
         # store the properties of the vertices into an dictionary
         props = {"heat_value": 0.0,    # float -> between 1.0 and 0.0
@@ -57,7 +67,7 @@ class HumanModel(Model):
         for _ in range(self.num_agents):
             # spawn agent on random node
             node_to_spawn = self.random.choice(list(self.network.nodes))
-            agent = HelperAgent(uuid1().int, self, node_to_spawn, self.max_helperagent_energy)
+            agent = self.helper_type(uuid1().int, self, node_to_spawn, self.max_helperagent_energy)
             self.grid.place_agent(agent, node_to_spawn)
             self.alive_helper_agents += 1
             # add to schedule
@@ -79,7 +89,7 @@ class HumanModel(Model):
 
     def _get_random_sickness(self) -> str:
         """Chooses a random sickness to return."""
-        illness = ["clapitalism", "kovid++", "Caring Too Much", "Cutie Pox"]
+        illness = ["clapitalism", "kovid++", "Caring Too Muche", "Cutie Pox"]
         return self.random.choice(illness)
 
     def _update_illness_status(self, vertex: int, is_healed: bool):
@@ -137,6 +147,8 @@ class HumanModel(Model):
 
         # Agents' StagedActivation
         self.schedule.step()
+
+        self.total_energy_agents = sum(agent.energy for agent in self.schedule.agents)
 
         # Collect data
         self.datacollector.collect(self)

@@ -10,7 +10,7 @@ class HelperAgent(Agent):
     Execution follows:
      - Perceive
      - Act
-     - Updatee
+     - Update
     """
     NextState = namedtuple("NextState", ["target", "energy_cost"], defaults=[None, 0])
 
@@ -162,10 +162,8 @@ class HelperAgent(Agent):
             self.model.schedule.remove(self)
             self.model.alive_helper_agents -= 1
 
-        self.model.total_energy_agents = self.energy
-
     def __repr__(self) -> str:
         return f"{self.__class__.__name__} {self.model}/{self.unique_id}: Energy {self.energy}: Position {self.pos}"
 
     def __str__(self) -> str:
-        return self.__repr__()
+        return " 🕵️"
