@@ -10,7 +10,7 @@ class HelperAgent(Agent):
     Execution follows:
      - Perceive
      - Act
-     - Update
+     - Updatee
     """
     NextState = namedtuple("NextState", ["target", "energy_cost"], defaults=[None, 0])
 
