@@ -62,3 +62,6 @@ class AgentFactory(Agent):
 
     def __str__(self) -> str:
         return self.__repr__()
+
+    def emojify(self):
+        return " 🏭"

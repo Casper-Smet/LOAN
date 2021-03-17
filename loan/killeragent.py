@@ -5,9 +5,6 @@ from mesa import Agent, Model
 
 
 class KillerAgent(Agent):
-
-    NextState = namedtuple("NextState", ["target", "energy_cost"], defaults=[None, 0])
-
     def __init__(self, unique_id: int, model: Model, creator, pos: int, target_location: int, target_disease: str) -> None:
         super().__init__(unique_id, model)
         self.creator = creator
@@ -38,3 +35,6 @@ class KillerAgent(Agent):
 
     def __str__(self) -> str:
         return self.__repr__()
+    
+    def emojify(self):
+        return " 💉"

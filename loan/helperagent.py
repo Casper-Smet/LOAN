@@ -4,6 +4,7 @@ from typing import List, Tuple
 import networkx as nx
 from mesa import Agent, Model
 
+NextState = namedtuple("NextState", ["target", "energy_cost"], defaults=[None, 0])
 
 class HelperAgent(Agent):
     """HelperAgent contains the Nanite-agent logic for the HelperNanite.
@@ -12,8 +13,6 @@ class HelperAgent(Agent):
      - Act
      - Update
     """
-    NextState = namedtuple("NextState", ["target", "energy_cost"], defaults=[None, 0])
-
     def __init__(self, unique_id: int, model: Model, pos: int, energy: int):
         super().__init__(unique_id, model)
         self.init_energy = energy
@@ -21,7 +20,7 @@ class HelperAgent(Agent):
         self.pos = pos
         # self.model.grid.place_agent(self, self.pos)
         # Holds the information about the next move to make
-        self.next_state = HelperAgent.NextState()
+        self.next_state = NextState()
         self.perception = {}
         self.percept_sequence = []  # Holds information about the visited Vertices
         self.factory_location = self.model.factory_location
@@ -68,6 +67,21 @@ class HelperAgent(Agent):
         # Get the adjacent edges of the current vertex and the weights!
         return [(key, value[0]["weight"]) for key, value in neighbors.items()]
 
+    def _list_of_best_neighbors(self, neighbors: List[int]) -> List[int]:
+        """Only keep all the neighbors with the best score based on heat value and cost."""
+        neighbors_with_heatvalue = list(filter(lambda n: self.model.cell_properties[n]["heat_value"] > 0.0, neighbors))
+
+        if not neighbors_with_heatvalue:  # Path with lowest cost since there's no target
+            neigh_with_lowest_cost = min(neighbors, key=lambda n: self._path_cost([self.pos, n])[0])
+            lowest_cost = self._path_cost([self.pos, neigh_with_lowest_cost])[0]
+            filtered = list(filter(lambda n: self._path_cost([self.pos, n])[0] == lowest_cost, neighbors))
+        else:  # Path with highest heat value
+            neigh_with_highest_heat = max(neighbors, key=lambda n: self.model.cell_properties[n]["heat_value"])
+            highest_heat = self.model.cell_properties[neigh_with_highest_heat]["heat_value"]
+            filtered = list(filter(lambda n: self.model.cell_properties[n]["heat_value"] == highest_heat, neighbors))
+        
+        return filtered
+
     def perceive(self) -> None:
         """"The perception of the agent.
         Sees:
@@ -111,36 +125,27 @@ class HelperAgent(Agent):
 
             # factory_location gets sick
             if self.factory_location == self.pos:
-                self.next_state = HelperAgent.NextState(target=self.pos, energy_cost=0)
+                self.next_state = NextState(target=self.pos, energy_cost=0)
             else:
                 path, _, energy_costs = self._best_path(self._perceive_paths(self.factory_location))
-                self.next_state = HelperAgent.NextState(target=path[1], energy_cost=energy_costs[0])
+                self.next_state = NextState(target=path[1], energy_cost=energy_costs[0])
 
         elif self.alert_for_disease_on_node:
             if self.factory_location == self.pos:
-                self.next_state = HelperAgent.NextState(target=self.pos, energy_cost=0)
+                self.next_state = NextState(target=self.pos, energy_cost=0)
             else:
                 path, _, energy_costs = self._best_path(self._perceive_paths(self.factory_location))
-                self.next_state = HelperAgent.NextState(target=path[1], energy_cost=energy_costs[0])
+                self.next_state = NextState(target=path[1], energy_cost=energy_costs[0])
 
         # Current vertex is not ill, so go with the flow!
         else:
             # Get the adjacent edges of the current vertex
             neighbors = self.model.get_neighbors(self.pos)
-            neighbors_with_heatvalue = list(filter(lambda n: self.model.cell_properties[n]["heat_value"] > 0.0, neighbors))
-
-            if not neighbors_with_heatvalue:  # Path with lowest cost since there's no target
-                neigh_with_lowest_cost = min(neighbors, key=lambda n: self._path_cost([self.pos, n])[0])
-                lowest_cost = self._path_cost([self.pos, neigh_with_lowest_cost])[0]
-                filtered = list(filter(lambda n: self._path_cost([self.pos, n])[0] == lowest_cost, neighbors))
-            else:  # Path with heigest heat value
-                neigh_with_highest_heat = max(neighbors, key=lambda n: self.model.cell_properties[n]["heat_value"])
-                highest_heat = self.model.cell_properties[neigh_with_highest_heat]["heat_value"]
-                filtered = list(filter(lambda n: self.model.cell_properties[n]["heat_value"] == highest_heat, neighbors))
-
+            # Only keep the best neighbours
+            best_neighbors = self._list_of_best_neighbors(neighbors)
             # Set the next state.
-            new_target = self.model.random.choice(filtered)
-            self.next_state = HelperAgent.NextState(target=new_target, energy_cost=self._path_cost([self.pos, new_target])[0])
+            new_target = self.model.random.choice(best_neighbors)
+            self.next_state = NextState(target=new_target, energy_cost=self._path_cost([self.pos, new_target])[0])
 
         self.going_with_the_flow = self.next_state.energy_cost < 4  # Determine if the dynamo should recharge the helperagent
 
@@ -161,9 +166,12 @@ class HelperAgent(Agent):
             self.model.grid._remove_agent(self, self.pos)
             self.model.schedule.remove(self)
             self.model.alive_helper_agents -= 1
+    
+    def emojify(self):
+        return " 🕵️"
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__} {self.model}/{self.unique_id}: Energy {self.energy}: Position {self.pos}"
 
     def __str__(self) -> str:
-        return " 🕵️"
+        return self.__repr__()

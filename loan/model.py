@@ -148,7 +148,7 @@ class HumanModel(Model):
         # Agents' StagedActivation
         self.schedule.step()
 
-        self.total_energy_agents = sum(agent.energy for agent in self.schedule.agents)
+        self.total_energy_agents = sum(agent.energy for agent in self.schedule.agents if isinstance(agent, HelperAgent))
 
         # Collect data
         self.datacollector.collect(self)

@@ -2,8 +2,7 @@ from typing import List
 
 from mesa import Model
 
-from loan.helperagent import HelperAgent
-
+from loan.helperagent import HelperAgent, NextState
 
 class GreedyHelperAgent(HelperAgent):
     """GreedyHelperAgent contains the Nanite-agent logic for the HelperNanite.
@@ -47,29 +46,6 @@ class GreedyHelperAgent(HelperAgent):
 
     def act(self) -> None:
         """Act."""
-        """
-        best_vertices = set([1,2,3,4])
-        available_vertices = best_vertices - self.unavailable_vertices  # difference
-        if len(available_vertices) == 0:
-            chosen_node = best(best_vertices)
-        else:
-            chosen_node = best(available_node)
-        for agent in self.perception["same_node_neighbors"]:
-            agent.unavailable_vertices.append(chosen_node)
-        """
-
-        """
-        best_vertices = set([1,2,3,4])
-        available_vertices = best_vertices - self.unavailable_vertices  # difference
-        chosen_node = best(available_node)
-        
-        if len(available_vertices) == 1:
-            for agent in self.perception["same_node_neighbors"]:
-                agent.reset_unavaible()
-        else:
-            for agent in self.perception["same_node_neighbors"]:
-                agent.unavailable_vertices.append(chosen_node)
-        """
         self.available_vertices = set(self.perception["all_neighbor_vertices"]) - set(self.unavailable_vertices)
 
         # Check whether the current vertex is ill
@@ -81,17 +57,17 @@ class GreedyHelperAgent(HelperAgent):
 
             # factory_location gets sick
             if self.factory_location == self.pos:
-                self.next_state = HelperAgent.NextState(target=self.pos, energy_cost=0)
+                self.next_state = NextState(target=self.pos, energy_cost=0)
             else:
                 path, _, energy_costs = self._best_path(self._perceive_paths(self.factory_location))
-                self.next_state = HelperAgent.NextState(target=path[1], energy_cost=energy_costs[0])
+                self.next_state = NextState(target=path[1], energy_cost=energy_costs[0])
 
         elif self.alert_for_disease_on_node:
             if self.factory_location == self.pos:
-                self.next_state = HelperAgent.NextState(target=self.pos, energy_cost=0)
+                self.next_state = NextState(target=self.pos, energy_cost=0)
             else:
                 path, _, energy_costs = self._best_path(self._perceive_paths(self.factory_location))
-                self.next_state = HelperAgent.NextState(target=path[1], energy_cost=energy_costs[0])
+                self.next_state = NextState(target=path[1], energy_cost=energy_costs[0])
 
         else:
             if not self.available_vertices:  # All next vertices are evenly populated
@@ -100,21 +76,27 @@ class GreedyHelperAgent(HelperAgent):
                     agent.reset_unavailable_vertices()  # All neighboring vertices are available to all future agents for this step
 
                 # Choose random vertex from all neighbors
-                chosen_vertex = self.model.random.choice(self.perception["all_neighbor_vertices"])  # Add best choice function
+                neighbors = self.perception["all_neighbor_vertices"]
+                best_neighbors = self._list_of_best_neighbors(neighbors)
+                chosen_vertex = self.model.random.choice(best_neighbors)  # Add best choice function
             else:
                 # Get random vertex from available vertices and remove from available vertices.
-                chosen_vertex = self.model.random.choice(list(self.available_vertices))  # Add best choice function
+                neighbors = list(self.available_vertices)
+                
+                best_neighbors = self._list_of_best_neighbors(neighbors)
+                chosen_vertex = self.model.random.choice(best_neighbors)  # Add best choice function
                 for agent in self.perception["agents_on_vertex"]:
                     agent.update_unavailable_vertices(chosen_vertex)
 
-            self.next_state = HelperAgent.NextState(target=chosen_vertex, energy_cost=self._path_cost([self.pos, chosen_vertex])[0])
+            
+            self.next_state = NextState(target=chosen_vertex, energy_cost=self._path_cost([self.pos, chosen_vertex])[0])
 
     def update(self) -> None:
-        """[summary]"""
+        """Update."""
         super().update()
 
         # reset the unavailable vertices to be sure
         self.reset_unavailable_vertices()
-
-    def __str__(self) -> str:
+    
+    def emojify(self):
         return " 🤑"
