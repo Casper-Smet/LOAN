@@ -10,8 +10,8 @@ from mesa.space import NetworkGrid
 from mesa.time import StagedActivation
 
 from loan.agentfactory import AgentFactory
-from loan.helperagent import HelperAgent
 from loan.greedyhelperagent import GreedyHelperAgent
+from loan.helperagent import HelperAgent
 from loan.helpers import graph_from_json
 
 
@@ -46,7 +46,7 @@ class HumanModel(Model):
         self.alive_helper_agents = 0
         self.total_energy_agents = 0
         self.max_helperagent_energy = max_helperagent_energy
-        
+
         if (helper_type := helper_type.lower()) == "helperagent":
             self.helper_type = HelperAgent
         elif helper_type == "greedyhelperagent":

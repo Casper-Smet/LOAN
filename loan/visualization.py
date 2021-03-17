@@ -4,7 +4,6 @@ from mesa.visualization.UserParam import UserSettableParameter
 
 from loan.agentfactory import AgentFactory
 from loan.helperagent import HelperAgent
-from loan.greedyhelperagent import GreedyHelperAgent
 from loan.helpers import give_node_positions, node_positions_on_canvas
 from loan.killeragent import KillerAgent
 
@@ -85,4 +84,3 @@ model_params = {"how_to": UserSettableParameter("static_text", value=textvalue),
                 "hitpoints": UserSettableParameter("slider", "Max hitpoints", 150, 1, 1000, 1),
                 "max_helperagent_energy": UserSettableParameter("slider", "Max energy of agents", 100, 1, 500, 1),
                 "helper_type": UserSettableParameter("choice", "Helper Type", value="helperagent", choices=["helperagent", "greedyhelperagent", "randomhelperagent"])}
-

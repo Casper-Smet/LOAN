@@ -1,7 +1,10 @@
-from loan.helperagent import HelperAgent
 from typing import List
 
-from mesa import Agent, Model
+from mesa import Model
+
+from loan.helperagent import HelperAgent
+
+
 class GreedyHelperAgent(HelperAgent):
     """GreedyHelperAgent contains the Nanite-agent logic for the HelperNanite.
     Greedy and reactive agents graph exploration
@@ -28,7 +31,7 @@ class GreedyHelperAgent(HelperAgent):
     def reset_unavailable_vertices(self):
         """Resets unavailable_vertices to an empty list."""
         self.unavailable_vertices = []
-    
+
     def update_unavailable_vertices(self, vertex: int):
         """Updates the unavailable vertices list by adding the vertex chosen by an agent.
 
@@ -68,7 +71,7 @@ class GreedyHelperAgent(HelperAgent):
                 agent.unavailable_vertices.append(chosen_node)
         """
         self.available_vertices = set(self.perception["all_neighbor_vertices"]) - set(self.unavailable_vertices)
-        
+
         # Check whether the current vertex is ill
         if self.perception["cur_pos_is_ill"]:
 
@@ -103,17 +106,15 @@ class GreedyHelperAgent(HelperAgent):
                 chosen_vertex = self.model.random.choice(list(self.available_vertices))  # Add best choice function
                 for agent in self.perception["agents_on_vertex"]:
                     agent.update_unavailable_vertices(chosen_vertex)
-                
+
             self.next_state = HelperAgent.NextState(target=chosen_vertex, energy_cost=self._path_cost([self.pos, chosen_vertex])[0])
 
-
     def update(self) -> None:
-        """[summary]
-        """
+        """[summary]"""
         super().update()
-        
+
         # reset the unavailable vertices to be sure
         self.reset_unavailable_vertices()
-    
+
     def __str__(self) -> str:
         return " 🤑"
