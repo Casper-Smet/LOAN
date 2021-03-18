@@ -61,13 +61,13 @@ def set_colour(heat_value):
     return colour
 
 
-health_chart = ChartModule([{"Label": "Hitpoints", "Color": "Red"}],
+health_chart = ChartModule([{"Label": "Hitpoints", "Color": "Red"}], canvas_height=80, canvas_width=250, 
                            data_collector_name="datacollector")
 
-helperagent_chart = ChartModule([{"Label": "Helper Agents energy", "Color": "Blue"}],
+helperagent_chart = ChartModule([{"Label": "Helper Agents energy", "Color": "Blue"}], canvas_height=80, canvas_width=250,
                                 data_collector_name="datacollector")
 
-tiles = [NetworkModule(network_portrayal, 300, 400), health_chart, helperagent_chart]
+tiles = [NetworkModule(network_portrayal, 400, 500), health_chart, helperagent_chart]
 
 textvalue = """Welcome to your imperfect body!"""
 
