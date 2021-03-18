@@ -4,7 +4,7 @@ from loan.model import HumanModel
 from collections import OrderedDict
 
 
-def run_batch(iterations=10, max_steps=100):
+def run_batch(iterations=100, max_steps=100):
     fixed_params = {}
 
     variable_params = OrderedDict()
@@ -18,7 +18,7 @@ def run_batch(iterations=10, max_steps=100):
                        "Vertices healed": HumanModel.get_healed_count}
 
     batch_run = BatchRunnerMP(HumanModel,
-                              nr_processes=None,
+                              nr_processes=8,
                               variable_parameters=variable_params,
                               fixed_parameters=fixed_params,
                               iterations=iterations,  # Iterations per combination of parameters
