@@ -8,10 +8,10 @@ from collections import OrderedDict
 
 def run_batch(iterations=1_0_0, max_steps=1_0_0, network_path: str = "./loan/data/network.json"):
     graph = graph_from_json(Path(network_path))
-    fixed_params = {}#{"network": graph}
-    variable_params = OrderedDict({"factory_location": tuple(range(1, 15)),
+    fixed_params = {}
+    variable_params = {"factory_location": tuple(range(1, 15)),
                                    "N": (1, 2, 4, 8, 10),
-                                   "helper_type": ("helperagent", "greedyhelperagent")})
+                                   "helper_type": ("helperagent", "greedyhelperagent")}
 
     batch_run = BatchRunner(HumanModel,
                             variable_parameters=variable_params,
