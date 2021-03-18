@@ -67,12 +67,16 @@ health_chart = ChartModule([{"Label": "Hitpoints", "Color": "Red"}],
 helperagent_chart = ChartModule([{"Label": "Helper Agents energy", "Color": "Blue"}],
                                 data_collector_name="datacollector")
 
-tiles = [NetworkModule(network_portrayal, 500, 600), health_chart, helperagent_chart]
+tiles = [NetworkModule(network_portrayal, 300, 400), health_chart, helperagent_chart]
 
-textvalue = """Welcome to your body!"""
+textvalue = """Welcome to your imperfect body!"""
 
-model_params = {"how_to": UserSettableParameter("static_text", value=textvalue),
-                "N": UserSettableParameter("slider", "Number of helper agents", 1, 1, 10, 1),
-                "hitpoints": UserSettableParameter("slider", "Max hitpoints", 150, 1, 1000, 1),
-                "max_helperagent_energy": UserSettableParameter("slider", "Max energy of agents", 100, 1, 500, 1),
-                "helper_type": UserSettableParameter("choice", "Helper Type", value="helperagent", choices=["helperagent", "greedyhelperagent"])}
+model_params = {
+    "how_to": UserSettableParameter("static_text", value=textvalue),
+    "N": UserSettableParameter("slider", "Number of helper agents", 1, 1, 10, 1),
+    "hitpoints": UserSettableParameter("slider", "Max hitpoints", 150, 1, 1000, 1),
+    "max_helperagent_energy": UserSettableParameter("slider", "Max energy of agents", 100, 1, 500, 1),
+    "illness_chance": UserSettableParameter("slider", "Vertex illness chance", 0.2, 0, 1, 0.05),
+    "max_ill_vertices": UserSettableParameter("slider", "Max simultaneous ill vertices", 4, 0, 15, 1),
+    "helper_type": UserSettableParameter("choice", "Helper Type", value="helperagent", choices=["helperagent", "greedyhelperagent"]),
+}

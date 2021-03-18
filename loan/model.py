@@ -24,7 +24,6 @@ class HumanModel(Model):
     INIT_HITPOINTS = 150
     INIT_ENERGY_HELPERAGENT = 100
     ILLNESS_CHANCE = 0.2
-    INTERSECT_ASTRAY_CHANCE = 0.2
     MAX_ILL_VERTICES = 4
     NUM_AGENTS = 1
     GRAPH = graph_from_json(Path("./loan/data/network.json"))
@@ -47,19 +46,19 @@ class HumanModel(Model):
         self.total_energy_agents = 0
         self.max_helperagent_energy = max_helperagent_energy
 
-        if (helper_type := helper_type.lower()) == "helperagent":
+        helper_type = helper_type.lower()
+        if helper_type == "helperagent":
             self.helper_type = HelperAgent
         elif helper_type == "greedyhelperagent":
             self.helper_type = GreedyHelperAgent
-        elif helper_type == "randomhelperagent":
-            self.helper_type = GreedyHelperAgent  # TODO: Change to RandomHelperAgent
         else:
             raise ValueError("Invalid helper_type: {helper_type}")
 
         # store the properties of the vertices into an dictionary
         props = {"heat_value": 0.0,    # float -> between 1.0 and 0.0
                  "is_ill": False,      # bool -> if the current vertex is ill
-                 "illness_type": None}  # str -> current illness (if the vertex is ill)
+                 "illness_type": None  # str -> current illness (if the vertex is ill)
+                 }  
 
         self.cell_properties = {x: copy.deepcopy(props) for x in self.network.nodes}
 
@@ -77,10 +76,12 @@ class HumanModel(Model):
         self.grid.place_agent(agentfactory, agentfactory.pos)
         self.schedule.add(agentfactory)
 
-        self.datacollector = DataCollector(model_reporters={"Hitpoints": "hitpoints",
-                                                            "Ill vertices": "ill_vertices",
-                                                            "Helper Agents alive": "alive_helper_agents",
-                                                            "Helper Agents energy": "total_energy_agents"})
+        self.datacollector = DataCollector(model_reporters={
+            "Hitpoints": "hitpoints",
+            "Ill vertices": "ill_vertices",
+            "Helper Agents alive": "alive_helper_agents",
+            "Helper Agents energy": "total_energy_agents"
+        })
         self.running = True
 
     def hurt(self):
