@@ -3,3 +3,5 @@ mesa
 networkx
 numpy
 tornado
+seaborn
+pandas
